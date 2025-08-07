@@ -1,0 +1,82 @@
+---
+title: "カルマンフィルタ"
+author: "榎本剛"
+format: revealjs
+bibliography: refs.bib
+csl: american-meteorological-society.csl
+slide-number: true
+footer: "データ同化夏の学校2025"
+---
+
+## 線型カルマンフィルタ
+
+$$
+\begin{aligned}
+\mathbf{x}^\mathrm{f}(t_{i+1}) &= \mathbf{M}(t_{i+1},\,t_i)\mathbf{x}^\mathrm{a}\\
+\mathbf{P}^\mathrm{f}(t_{i+1}) &= \mathbf{M}(t_{i+1},\,t_i)\mathbf{P}^\mathrm{a}(t_{i})\mathbf{M}^\mathrm{T}(t_{i+1},\,t_i) + \mathbf{Q}(t_i)\\
+\mathbf{K}_i &= \mathbf{P}^\mathrm{f}(t_i)\mathbf{H}_i^\mathrm{T}[\mathbf{H}_i\mathbf{P}^\mathrm{f}(t_i)\mathbf{H}_i^\mathrm{T} + \mathbf{R}_i]^{-1}\\
+\mathbf{x}^\mathrm{a}(t_i) &= \mathbf{x}^\mathrm{f}(t_i) + \mathbf{K}_i[\mathbf{y}_i^\mathrm{o} - \mathbf{H}_i\mathbf{x}^\mathrm{f}(t_i)]\\
+\mathbf{P}^\mathrm{a}(t_i) &= [\mathbf{I} - \mathbf{K}_i\mathbf{H}_i]\mathbf{P}^\mathrm{f}(t_i)
+\end{aligned}
+$$
+
+## 拡張カルマンフィルタ
+
+EKF: extended Kalman filter
+
+状態の予報と解析にそれぞれ非線型の$M$と$H$を用いる。
+
+$$
+\begin{aligned}
+\mathbf{x}^\mathrm{f}(t_{i+1}) &= \color{red}{M_{t_{i+1},\,t_i}(\mathbf{x}^\mathrm{a})}\\
+\mathbf{P}^\mathrm{f}(t_{i+1}) &= \mathbf{M}(t_{i+1},\,t_i)\mathbf{P}^\mathrm{a}(t_{i})\mathbf{M}^\mathrm{T}(t_{i+1},\,t_i) + \mathbf{Q}(t_i)\\
+\mathbf{K}_i &= \mathbf{P}^\mathrm{f}(t_i)\mathbf{H}_i^\mathrm{T}[\mathbf{H}_i\mathbf{P}^\mathrm{f}(t_i)\mathbf{H}_i^\mathrm{T} + \mathbf{R}_i]^{-1}\\
+\mathbf{x}^\mathrm{a}(t_i) &= \mathbf{x}^\mathrm{f}(t_i) + \mathbf{K}_i[\mathbf{y}_i^\mathrm{o} - \color{red}{H_i(\mathbf{x}^\mathrm{f}(t_i))}]\\
+\mathbf{P}^\mathrm{a}(t_i) &= [\mathbf{I} - \mathbf{K}_i\mathbf{H}_i]\mathbf{P}^\mathrm{f}(t_i)
+\end{aligned}
+$$
+
+## EKFの特徴
+
+- $\mathbf{x}_i$ に関して力学及び観測モデルを線型化。
+- 非線型な解の軌道 $\mathbf{x}$ の近傍で $\mathbf{P}$ の時間発展を追う。
+- 入力は初期状態 $(\mathbf{x},\,\mathbf{P})$ 、一連の観測 $\mathbf{y}^\mathrm{o}$ 、 モデル及び観測誤差共分散 $(\mathbf{Q},\,\mathbf{R})$。
+- 出力は状態 $(\mathbf{x},\,\mathbf{P})$ の推定値。
+- モデルが線型ならば最適、非線型なら近似。
+
+## 4DVarとEKFとの比較
+
+- モデル誤差を無視すると、同化窓の終端で4DVarと同一で、4DVarのコスト函数においてEKFは最適。
+- 4DVarの方がEKFよりも計算負荷が小さい。
+- 4DVarは同化窓の中でEKFよりも最適で滑らか。
+- 4DVarは完全モデルを仮定、EKFはモデル誤差を考慮。
+- 4DVarは同化窓の範囲に限定、EKFは連続的に解析可。
+- EKFは誤差共分散の推定値を与える。
+
+## 実装上の課題
+
+- 行列のサイズ。$\mathbf{P},\,\mathbf{Q}\text{:}\,n\times n,\,\mathbf{R}\text{:}\,p \times p$, $\mathbf{K}\text{:}\,n\times p$
+- 誤差共分散の予報は力学モデルの予報の $n$ 回に相当。
+- $\mathbf{K}$ に $p\times p$ の逆行列
+- $\mathbf{P}$ の正定値性と要素の小ささの維持。
+
+## 実装上の工夫
+
+- 誤差共分散の解析を対称にする[@Bouttier:1994]。
+
+$$
+\mathbf{P}^\mathrm{a} = [\mathbf{I} - \mathbf{K}\mathbf{H}]\mathbf{P}^\mathrm{f}[\mathbf{I} - \mathbf{K}\mathbf{H}]^\mathrm{T} + \mathbf{KRK}^\mathrm{T}
+$$
+
+- $\mathbf{M}^\mathrm{T}$ と明示的な $\mathbf{M}$ を不要にする[@Gauthier-etal:1993]。
+
+$$
+\mathbf{MPM}^\mathrm{T} = \mathbf{M}(\mathbf{MP})^\mathrm{T}
+$$
+
+## 参考文献
+
+@Bouttier:1995
+
+::: refs
+:::
