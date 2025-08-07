@@ -33,10 +33,10 @@ forecast_ecov <- function(pamat, tfunc, sq, nx, ...) {
   mpmat <- matrix(0, n, n)
   pfmat <- matrix(0, n, n)
   for (i in 1:n) {
-    mpmat[, i] <- tfunc(pamat[, i], ...)
+    mpmat[, i] <- tfunc(pamat[1:nx, i], ..., da = pamat[(nx+1):n, i])
   }
   for (i in 1:n) {
-    pfmat[, i] <- tfunc(mpmat[i, ], ...)
+    pfmat[, i] <- tfunc(mpmat[i, 1:nx], ..., da = pamat[(nx+1):n, i])
   }
   qmat <- matrix(0, n, n)
   qmat[1:nx, 1:nx] <- matrix(rnorm(nx * nx, 0, sq^2), nx, nx)
@@ -105,7 +105,7 @@ for (t in 1:ntobs) {
   t_hist <- c(t_hist, n:tobs[t], tobs[t])
   xf <- forecast_state(xa, forward, dt = dt, nmax = nf)
   pfmat <- forecast_ecov(pamat, tlm, sq, nx = 2,
-                         x = xf[1,], y = xf[2,], dt = dt, a = xa[3:8], da = da)
+                         x = xf[1,], y = xf[2,], dt = dt, a = xa[3:8])
   kmat <- calc_kgain(pfmat, hmat, rmat)
   xa <- analyze_state(xf[, nf], kmat, yo[, t], hfunc)
   pamat <- analyze_ecov(pfmat, kmat, hmat, rmat)
