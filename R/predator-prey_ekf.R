@@ -16,10 +16,12 @@ tlm <- function(dw, x, y, dt, a, da = rep(0, length(a))) {
   dy <- dw[2]
   nmax <- length(x)
   for (n in 1:(nmax-1)) {
-    dx <- dx + dt * ((a[1] + 2 * a[2] * x[n] + a[3] * y[n]) * dx + a[3] * x[n] * dy +
-      a[1] * x[n] * da[1] + a[2] * x[n]^2 * da[2] + a[3] * x[n] * y[n] * da[3])
-    dy <- dy + dt * (a[6] * y[n] * dx + (a[4] + 2 * a[5] * y[n] + a[6] * x[n]) * dy +
-      a[4] * y[n] * da[4] + a[5] * y[n]^2 * da[5] + a[6] * x[n] * y[n] * da[6])
+    dx <- dx + dt * (
+      (a[1] + 2 * a[2] * x[n] + a[3] * y[n]) * dx + a[3] * x[n] * dy +
+        x[n] * da[1] + x[n]^2 * da[2] + x[n] * y[n] * da[3])
+    dy <- dy + dt * (
+      a[6] * y[n] * dx + (a[4] + 2 * a[5] * y[n] + a[6] * x[n]) * dy +
+        y[n] * da[4] + y[n]^2 * da[5] + x[n] * y[n] * da[6])
   }
   c(dx, dy)
 }
@@ -38,8 +40,11 @@ forecast_ecov <- function(pamat, tfunc, sq, ...) {
   for (i in 1:n) {
     pfmat[, i] <- tfunc(mpmat[i, ], ...)
   }
-  pfmat + matrix(rnorm(n * n, 0, sq), n, n)
-#  pfmat + matrix(diag(rnorm(n, 0, sq)), n, n)
+#  qmat <- matrix(rnorm(n * n, 0, sq), n, n)
+#  qmat <- matrix(diag(rnorm(n, 0, sq)), n, n)
+  q <- rnorm(n, 0, sq)
+  qmat <- outer(q, q)
+  pfmat + qmat
 }
 
 calc_kgain <- function(pfmat, hmat, rmat) {
@@ -72,8 +77,8 @@ ntobs <- length(tobs)
 wt <- forward(w1, dt, nmax)
 yo <- wt[, tobs]
 
-a <- c(1, 0, 0, -1, 0, 0)
-#a <- at
+#a <- c(1, 0, 0, -1, 0, 0)
+a <- at
 xa <- c(2, 2, a)
 x_hist <- numeric(0)
 y_hist <- numeric(0)

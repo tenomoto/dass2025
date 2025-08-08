@@ -16,10 +16,12 @@ tlm <- function(dw, x, y, dt, a, da = rep(0, length(a))) {
   dy <- dw[2]
   nmax <- length(x)
   for (n in 1:(nmax-1)) {
-    dx <- dx + dt * ((a[1] + 2 * a[2] * x[n] + a[3] * y[n]) * dx + a[3] * x[n] * dy +
-                       a[1] * x[n] * da[1] + a[2] * x[n]^2 * da[2] + a[3] * x[n] * y[n] * da[3])
-    dy <- dy + dt * (a[6] * y[n] * dx + (a[4] + 2 * a[5] * y[n] + a[6] * x[n]) * dy +
-                       a[4] * y[n] * da[4] + a[5] * y[n]^2 * da[5] + a[6] * x[n] * y[n] * da[6])
+    dx <- dx + dt * (
+      (a[1] + 2 * a[2] * x[n] + a[3] * y[n]) * dx + a[3] * x[n] * dy +
+      x[n] * da[1] + x[n]^2 * da[2] + x[n] * y[n] * da[3])
+    dy <- dy + dt * (
+      a[6] * y[n] * dx + (a[4] + 2 * a[5] * y[n] + a[6] * x[n]) * dy +
+      y[n] * da[4] + y[n]^2 * da[5] + x[n] * y[n] * da[6])
   }
   c(dx, dy)
 }
@@ -36,11 +38,13 @@ forecast_ecov <- function(pamat, tfunc, sq, nx, ...) {
     mpmat[, i] <- tfunc(pamat[1:nx, i], ..., da = pamat[(nx+1):n, i])
   }
   for (i in 1:n) {
-    pfmat[, i] <- tfunc(mpmat[i, 1:nx], ..., da = pamat[(nx+1):n, i])
+    pfmat[, i] <- tfunc(mpmat[i, 1:nx], ..., da = mpmat[i, (nx+1):n])
   }
-  qmat <- matrix(0, n, n)
-  qmat[1:nx, 1:nx] <- matrix(rnorm(nx * nx, 0, sq^2), nx, nx)
-#  qmat[1:nx, 1:nx] <- diag(rnorm(nx, 0, sq^2))
+  q <- rnorm(nx, 0, sq)
+  qmat <- outer(q, q)
+  q <- rnorm(n - nx, 0, sq)
+  qmat <- rbind(cbind(qmat, matrix(0, nx, n - nx)),
+                cbind(matrix(0, n - nx, nx), outer(q, q)))
   pfmat + qmat
 }
 
@@ -96,8 +100,6 @@ pamat <- rbind(cbind(diag(sb^2, 2, 2), matrix(0, 2, 6)),
                cbind(matrix(0, 6, 2), diag(sa^2, 6, 6)))
 rmat <- diag(sr^2, 2, 2)
 sq <- 0.2
-da <- rep(sa, 6)
-#da <- rep(0, 6)
 n <- 1
 #ntobs <- 1
 for (t in 1:ntobs) {
@@ -108,6 +110,7 @@ for (t in 1:ntobs) {
                          x = xf[1,], y = xf[2,], dt = dt, a = xa[3:8])
   kmat <- calc_kgain(pfmat, hmat, rmat)
   xa <- analyze_state(xf[, nf], kmat, yo[, t], hfunc)
+  xa[3:8] <- a
   pamat <- analyze_ecov(pfmat, kmat, hmat, rmat)
   x_hist <- c(x_hist, xf[1, ], xa[1])
   y_hist <- c(y_hist, xf[2, ], xa[2])
