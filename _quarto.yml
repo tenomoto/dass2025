@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "dass2025"
+  navbar:
+    search: true
+    left:
+      - href: index.qmd
+        text: "ホーム"
+      - setup.qmd
+
+appendix-style: plain
+
+bibliography: refs.bib
+csl: american-meteorological-society.csl
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+crossref:
+  eq-prefix: ""

@@ -2,8 +2,8 @@
 title: "随伴モデルを</br>作ってみよう"
 author: "榎本剛"
 format: revealjs
-bibliography: refs.bib
-csl: american-meteorological-society.csl
+bibliography: ../refs.bib
+csl: ../american-meteorological-society.csl
 slide-number: true
 footer: "データ同化夏の学校2025"
 ---
@@ -153,11 +153,11 @@ $$
 
 - 時間を逆行するので、コードを逆順に辿る。
 - ループは逆に回す。
-- 順行コードの右辺を制御変数`x`で微分する。
-- 微分に状態変数の随伴`az`を掛ける。
-- これを制御変数の随伴`ax`に足す。
-- 複数回`x`が出てきたら、それぞれ微分する。
-- 全ての変数について行う。
+- 順行コードの右辺を制御変数 `a_6` で微分する。
+- 微分に状態変数の随伴 `ay` を掛ける。
+- これを制御変数の随伴 `a_6` に足す。
+- 制御変数 `y` が複数回出てきたら、それぞれ微分する。
+- 全ての制御変数について行う。
 - 随伴変数は0に初期化する。
 
 ## 捕食者パラメタの随伴
@@ -332,6 +332,17 @@ $$
 - [scipy.optimize](https://docs.scipy.org/doc/scipy/reference/optimize.html)
 - Nocedal [L-BFGS](http://users.iems.northwestern.edu/~nocedal/lbfgs.html) [CG+](http://users.iems.northwestern.edu/~nocedal/CG+.html)
 - [NLopt](https://nlopt.readthedocs.io/)
+
+## 課題
+
+- 捕食・被食モデルの時間発展（スライド6）を調べる。
+    - 初期状態やパラメタを変えてみよう。
+    - 位相空間にプロットする（スライド7）。
+- 随伴モデルを作成する。
+    - 異なる初期値とから真の初期値を復元する。
+    - 異なる初期値とパラメタから真値を復元する。
+    - 最適化手法を変えてみる。
+    - 背景誤差や観測誤差を考慮する。
 
 ## 参考文献
 

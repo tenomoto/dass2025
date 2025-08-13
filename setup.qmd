@@ -1,0 +1,239 @@
+---
+title: 環境構築
+---
+演習用プログラムは、Fortran および Python のプログラムを配布する。
+実行には以下の環境が必要となる。
+
+## Fortran
+
+ノートパソコンに、Fortranコンパイラ (gfortranなど) を用意する。
+配布プログラムはgfortran-14.2.0（Mac）、13.2.0（Windows）でコンパイル、実行ができることを確認した。
+Fortran組込手続である`matmul`などを用いて、線型代数ライブラがなくても進められるようにしているが、行列計算を行うには[OpenBLAS](https://www.openblas.net/)などの線型代数ライブラリを用意する。
+
+Fortranプログラムの実行結果を可視化するために、1次元及び2次元のプロットができるアプリケーションが必要である。演習ではRで書かれたスクリプトを配布する。
+
+## Python
+
+Pythonは一般的なプログラミング言語であり、ライブラリを追加する必要がある。
+数学函数や行列計算にはNumpyを用いる。
+データの描画にはMatplotlibが一般的である。
+ノートパソコンに、Python実行環境を準備する。
+配布するスクリプトはPython3.12.5で作成した。
+
+## Jupyter
+
+職場や研究室のリモート環境やクラウドを用いることもできる。
+[Google Colaboratory](https://colab.research.google.com/)はGoogleアカウントがあれば無料で利用できる。
+無償版は使用できる資源に制約がある。
+ネットワーク環境の制約を受けることにも注意が必要である。
+
+Google Colaboratoryは[Jupyter](https://jupyter.org/)のように、ウェブブラウザから使う。
+Jupyterはノートパソコンに構築することもできる（[Windows](#sec-jupyter-win)、[Mac](#sec-jupyter-mac)参照）。
+
+Python3をCPUで使うのが既定であるが、GPUを使ったり、Rを使うこともできる。
+次のようにgfortranを使うこともできる。
+
+```jupyter
+%%writefile hello.f90
+print *, "Hello, world!"
+end
+```
+
+シェルエスケープしてコンパイル、実行する。
+
+```jupyter
+!gfortran -o hello hello.f90
+```
+
+```jupyter
+./hello
+```
+
+## ターミナル
+
+Windowsは近年ターミナルやLinuxとの統合を強化している。黒い窓と呼ばれたDOS窓コマンドプロンプト（cmd.exe）でのMS-DOSに代わり、Windows 11や最新のWindowsではTerminalが既定の端末エミュレータである。
+インストールされていない場合は、Microsoft Storeで検索してインストールする。
+
+Macには「アプリケーション/ユーティリティ」に、LaunchPadでは「その他」にある。
+
+## Windows
+
+Windowsでは、[winget](https://learn.microsoft.com/ja-jp/windows/package-manager/winget/)を用いると簡単に環境構築ができる。
+
+PowershellはWindows PowerShellではなく、マルチプラットフォームのPowerShell 7以降を使う。
+PowerShellをインストールして設定してみよう。
+スタートメニューから「ターミナル」または「terminal」を検索して、タスクバーに追加する。起動すると、古いWindows PowerShellが起動する。PowerShell 7をインストールするように案内が表示される。
+
+```powershell
+winget install Microsoft.PowerShell
+```
+
+プロファイルが自動で作成されるので、これがWindowsターミナルを起動した時に選択されるように設定する。ウインドウのタイトルバーの下向き記号から設定を選択するか、Ctrl+,で設定画面を表示する。「スタートアップ」の「既定のプロファイル」から、青ではなく黒のPowerShellを選び、ウィンドウ右下の「保存」ボタンをクリックする。
+![](powershell_default_profile.png)
+
+### Pythonのインストール
+
+Fortranを用いる場合は、飛ばして良い。
+
+```powershell
+winget install Python.Python.3.12
+```
+
+新しいタブを開くと、pythonにパスが通っている。
+pythonから抜けるには`quit()`とタイプする。
+
+```powershell
+PowerShell 7.4.4
+python
+Python 3.12.5 (tags/v3.12.5:ff3bc82, Aug  6 2024, 20:45:25) [MSC v.1940 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+>>> quit()
+```
+
+pipでNumpyとmatplotlibをインストールする。
+
+```powershell
+pip install numpy matplotlib
+```
+
+### Jupyterのインストール {#sec-jupyter-win}
+
+jupyterをインストールする。
+
+```powershell
+pip install jupyter
+```
+
+JupyterLabまたはJupyter Notebookを起動すると、既定のブラウザに表示される。
+
+```powershell
+jupyter notebook
+```
+
+### エディタのインストール
+
+ソースコードを書くには、テキストエディタを用いる。必要なものを一つ入れる。
+```powershell
+winget install Neovim.Neovim
+winget install GNU.Emacs
+winget install Microsoft.VisualStudioCode
+```
+
+私は[neovim](https://neovim.io/)を使っている。Neovim（コマンド名は`nvim`）を起動して`:Tutor`とタイプすると、チュートリアルが始まる。
+
+### gfortranとRのインストール
+
+Fortranでの計算結果の可視化にはRスクリプトを配布する。
+R以外で描画する場合はRは不要であるが、gfortranを使うにはRの開発環境であるRToolsをインストールする。
+RToolsにはMinGW-w64が含まれているが、最も手軽に開発環境を構築できる。
+Numpyの[ソースからのインストール](https://numpy.org/doc/stable/building/index.html)にも推奨されている。
+
+```powershell
+winget install RProject.R
+winget install RProject.Rtools
+```
+
+パスを設定する。設定ファイルはドキュメント（パソコンのアカウントがMicrosoftアカウントと紐付けられている場合は`OneDrive\ドキュメント`）の`PowerShell`フォルダの中の`Microsoft.PowerShell_profile.ps1`に保存される。`PowerShell`フォルダがないと保存できないことがあるので、あらかじめ作成しておく。Neovimで編集する場合は次のようにする。
+
+```powershell
+nvim $profile
+```
+
+```powershell
+$env:PATH += "$env:ProgramFiles/R/R-4.4.1/bin/x64;"
+$env:PATH += "C:/rtools44/usr/bin;C:/rtools44/x86_w64-mingw32.static.posix/bin;"
+```
+
+`R`は1行目のパスに、make`は2行目の前者に、`gfortran`は後者にある。
+`R`はPowerShellでは、一つ前に投入したコマンドを呼び出すものであり、名前が衝突する。
+Rを起動したいときは、`R.exe`と打鍵する。
+`x86_w64-mingw32.static.posix`はプラットフォームに依存するので、ARM64では異なる。
+別タブを開いてgfortranがあることを確認する。
+```powershell
+gfortran --version
+```
+
+## Mac
+
+プログラミング習の範囲ではMacでも、公式サイトのPythonインストーラでよい。コンパイルが必要な外部ライブラリに依存する場合は、[MacPorts](https://www.macports.org/)を使ってインストールすることをお勧めする。Homebrewはネット上に多くの情報があるが、一貫した環境を提供するMacPortsを推す（Qiitaの[解説](https://qiita.com/tenomoto/items/66614f982de96641d662)）。MacPortsの既定のインストール先は`/opt/local`である。[Homebrew](https://docs.brew.sh/Installation)は、Intel Macでは`/usr/local`に、インストールされるので、自分でコンパイルしたものと混在することになる。Apple Siliconでは（ついに学んだのか）`/opt/homebrew`にインストールされる。IntelからApple Siliconに乗り換えたときに面倒が起きそうである。
+
+### MacPortsのインストール
+
+[Installing MacPorts](https://www.macports.org/install.php)に従って、次の手順でインストールする。
+
+OSを最新に更新した後、OSに応じたpkgインストーラ（アプリケーションをインストールする普通のインストーラ）を入手してMacPortsをインストールする。
+インストーラは`/opt/local/bin`を`.zshrc`に追加する。
+
+1. AppleのCommand Line Developer Toolsをインストールする。
+
+```zsh
+sudo xcode-select --install
+```
+
+2. （オプション）App StoreからXcodeをインストールしライセンスに同意する。
+
+```zsh
+sudo xcodebuild -license
+```
+
+3. （オプション）X11ウインドウ環境を用いる場合は`xorg-server`ポートをインストールする。
+```zsh
+sudo port install xorg-server
+```
+
+インストールが済んだら、
+
+```zsh
+sudo port -v selfupdate
+```
+
+を実行する。
+`port`コマンドについては、`man port`または[ドキュメント](https://guide.macports.org/#using)参照。
+
+### Pythonのインストール
+
+複数のバージョンを共存させるために、Pythonのライブラリ名はpy312-numpyのようにPythonのバージョンが付されている。
+`python312`は`/opt/local/Library/Frameworks/Python.framework/Versions/3.12`にインストールされる。
+
+```zsh
+sudo port install python312
+```
+インストール後に表示されるメッセージにあるが、使用するバージョンを`select`サブコマンドで選択する。
+
+```zsh
+sudo port select python python312
+```
+
+次にNumpyとmatplotlibをインストールする。
+```zsh
+sudo port install py312-numpy py312-matplotlib
+```
+`python312`を明示的にインストールしなてくも、Numpyやmatpotlibが依存するものとしてインストールされる。
+
+### Jupyterのインストール {#sec-jupyter-mac}
+
+JupyterもMacPortsで簡単にインストールできる。
+
+```zsh
+sudo port install py312-jupyter
+```
+
+### gfortranとRのインストール
+
+gfortranはgccの一部として配布されている。
+
+```
+sudo port install gcc14
+```
+
+gccも複数のバージョンを共存させるため、`gfortran-mp-14`のようにバージョン番号をつけた実行ファイル名になっている。
+
+```zsh
+sudo port select gcc mp-gcc14
+```
+を実行するとgcc14を既定として`gfortran-mp-14`を指すエイリアス`gfortran`が`/opt/local/bin`に作成される。
+
+描画に使う場合には、Rもインストールする。
+```zsh
+sudo port install R
+```

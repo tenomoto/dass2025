@@ -15,22 +15,18 @@ tlm <- function(dw, x, y, dt, a, da = rep(0, length(a))) {
   dx <- dw[1]
   dy <- dw[2]
   nmax <- length(x)
-  for (n in 1:(nmax-1)) {
-    dx <- dx + dt * (
-      (a[1] + 2 * a[2] * x[n] + a[3] * y[n]) * dx + a[3] * x[n] * dy +
-      x[n] * da[1] + x[n]^2 * da[2] + x[n] * y[n] * da[3])
-    dy <- dy + dt * (
-      a[6] * y[n] * dx + (a[4] + 2 * a[5] * y[n] + a[6] * x[n]) * dy +
-      y[n] * da[4] + y[n]^2 * da[5] + x[n] * y[n] * da[6])
-  }
-  c(dx, dy)
+  dxdt <- (a[1] + 2 * a[2] * x + a[3] * y) * dx + a[3] * x * dy +
+      x * da[1] + x^2 * da[2] + x * y * da[3]
+    dydt <- a[6] * y * dx + (a[4] + 2 * a[5] * y + a[6] * x) * dy +
+      y * da[4] + y^2 * da[5] + x * y * da[6]
+  c(dx + dt * dxdt, dy + dt * dydt)
 }
 
 forecast_state <- function(xa, mfunc, ...) {
   mfunc(xa, ...)
 }
 
-forecast_ecov <- function(pamat, tfunc, sq, nx, ...) {
+forecast_ecov <- function(pamat, tfunc, qmat, nx, ...) {
   n <- nrow(pamat)
   mpmat <- matrix(0, n, n)
   pfmat <- matrix(0, n, n)
@@ -40,11 +36,6 @@ forecast_ecov <- function(pamat, tfunc, sq, nx, ...) {
   for (i in 1:n) {
     pfmat[, i] <- tfunc(mpmat[i, 1:nx], ..., da = mpmat[i, (nx+1):n])
   }
-  q <- rnorm(nx, 0, sq)
-  qmat <- outer(q, q)
-  q <- rnorm(n - nx, 0, sq)
-  qmat <- rbind(cbind(qmat, matrix(0, nx, n - nx)),
-                cbind(matrix(0, n - nx, nx), outer(q, q)))
   pfmat + qmat
 }
 
@@ -71,15 +62,14 @@ nmax <- 501
 dt <- 0.001
 at <- c(4, -2, -4, -6, 2, 4)
 w1 <- c(1, 1, at)
-iobs1 <- 10
-dobs <- 10
+iobs1 <- 2
+dobs <- 2
 tobs <- seq(iobs1, nmax, by = dobs)
 ntobs <- length(tobs)
 wt <- forward(w1, dt, nmax)
 yo <- wt[, tobs]
 
 a <- c(1, 0, 0, -1, 0, 0)
-#a <- at
 xa <- c(2, 2, a)
 x_hist <- numeric(0)
 y_hist <- numeric(0)
@@ -95,22 +85,24 @@ hfunc <- function(x) x
 hmat <- cbind(diag(1, 2, 2), matrix(0, 2, 6))
 sb <- 0.1
 sr <- 0.1
-sa <- 0.1
+sa <- 1
 pamat <- rbind(cbind(diag(sb^2, 2, 2), matrix(0, 2, 6)),
                cbind(matrix(0, 6, 2), diag(sa^2, 6, 6)))
 rmat <- diag(sr^2, 2, 2)
-sq <- 0.2
+sq <- 1e-1
+ss <- 1e-1
+qmat <- diag(c(rep(sq^2, 2), rep(ss^2, 6)))
+
 n <- 1
-#ntobs <- 1
 for (t in 1:ntobs) {
   nf <- tobs[t] - n + 1
   t_hist <- c(t_hist, n:tobs[t], tobs[t])
   xf <- forecast_state(xa, forward, dt = dt, nmax = nf)
-  pfmat <- forecast_ecov(pamat, tlm, sq, nx = 2,
-                         x = xf[1,], y = xf[2,], dt = dt, a = xa[3:8])
+  pfmat <- forecast_ecov(pamat, tlm, qmat, nx = 2,
+                         x = xa[1], y = xa[2], dt = nf * dt, a = xa[3:8])
   kmat <- calc_kgain(pfmat, hmat, rmat)
   xa <- analyze_state(xf[, nf], kmat, yo[, t], hfunc)
-  xa[3:8] <- a
+#  xa[3:8] <- at
   pamat <- analyze_ecov(pfmat, kmat, hmat, rmat)
   x_hist <- c(x_hist, xf[1, ], xa[1])
   y_hist <- c(y_hist, xf[2, ], xa[2])

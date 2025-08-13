@@ -1,0 +1,30 @@
+---
+title: "データ同化夏の学校2025 初級課題"
+---
+
+## 随伴モデルを作ってみよう
+
+<div>
+```{=html}
+<iframe class="slide-deck" src="handson/"></iframe>
+```
+</div>
+
+[随伴モデルを作ってみよう](handson/){target="_blank"}
+
+## リンク
+
+## 拡張カルマンフィルタ
+
+<div>
+```{=html}
+<iframe class="slide-deck" src="ekf/"></iframe>
+```
+</div>
+
+[拡張カルマンフィルタ](ekf/){target="_blank"}
+
+## リンク
+
+- [海洋データ同化夏の学校](http://jmsfmml.or.jp/j/event/summerschool/2025/2025index.html)
+- [ソース](https://github.com/tenomoto/dass2025)

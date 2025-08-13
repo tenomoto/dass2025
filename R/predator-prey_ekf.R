@@ -15,22 +15,18 @@ tlm <- function(dw, x, y, dt, a, da = rep(0, length(a))) {
   dx <- dw[1]
   dy <- dw[2]
   nmax <- length(x)
-  for (n in 1:(nmax-1)) {
-    dx <- dx + dt * (
-      (a[1] + 2 * a[2] * x[n] + a[3] * y[n]) * dx + a[3] * x[n] * dy +
-        x[n] * da[1] + x[n]^2 * da[2] + x[n] * y[n] * da[3])
-    dy <- dy + dt * (
-      a[6] * y[n] * dx + (a[4] + 2 * a[5] * y[n] + a[6] * x[n]) * dy +
-        y[n] * da[4] + y[n]^2 * da[5] + x[n] * y[n] * da[6])
-  }
-  c(dx, dy)
+  dxdt <- (a[1] + 2 * a[2] * x + a[3] * y) * dx + a[3] * x * dy +
+    x * da[1] + x^2 * da[2] + x * y * da[3]
+  dydt <- a[6] * y * dx + (a[4] + 2 * a[5] * y + a[6] * x) * dy +
+    y * da[4] + y^2 * da[5] + x * y * da[6]
+  c(dx + dt * dxdt, dy + dt * dydt)
 }
 
 forecast_state <- function(xa, mfunc, ...) {
   mfunc(xa, ...)
 }
 
-forecast_ecov <- function(pamat, tfunc, sq, ...) {
+forecast_ecov <- function(pamat, tfunc, qmat, ...) {
   n <- nrow(pamat)
   mpmat <- matrix(0, n, n)
   pfmat <- matrix(0, n, n)
@@ -40,10 +36,6 @@ forecast_ecov <- function(pamat, tfunc, sq, ...) {
   for (i in 1:n) {
     pfmat[, i] <- tfunc(mpmat[i, ], ...)
   }
-#  qmat <- matrix(rnorm(n * n, 0, sq), n, n)
-#  qmat <- matrix(diag(rnorm(n, 0, sq)), n, n)
-  q <- rnorm(n, 0, sq)
-  qmat <- outer(q, q)
   pfmat + qmat
 }
 
@@ -77,7 +69,7 @@ ntobs <- length(tobs)
 wt <- forward(w1, dt, nmax)
 yo <- wt[, tobs]
 
-#a <- c(1, 0, 0, -1, 0, 0)
+a <- c(1, 0, 0, -1, 0, 0)
 a <- at
 xa <- c(2, 2, a)
 x_hist <- numeric(0)
@@ -95,13 +87,16 @@ sr <- 0.1
 pamat <- diag(sb^2, 2, 2)
 rmat <- diag(sr^2, 2, 2)
 sq <- 0.2
+q <- rnorm(2, 0, sq)
+qmat <- outer(q, q)
 
 n <- 1
 for (t in 1:ntobs) {
   nf <- tobs[t] - n + 1
   t_hist <- c(t_hist, n:tobs[t], tobs[t])
   xf <- forecast_state(xa, forward, dt = dt, nmax = nf)
-  pfmat <- forecast_ecov(pamat, tlm, sq, x = xf[1,], y = xf[2,], dt = dt, a = a)
+  pfmat <- forecast_ecov(pamat, tlm, qmat,
+                         x = xa[1], y = xa[2], dt = nf * dt, a = a)
   kmat <- calc_kgain(pfmat, hmat, rmat)
   xa <- analyze_state(xf[, nf], kmat, yo[, t], hfunc)
   xa <- c(xa, a)
