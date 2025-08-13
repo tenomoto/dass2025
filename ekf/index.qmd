@@ -1,11 +1,18 @@
 ---
 title: "カルマンフィルタ"
 author: "榎本剛"
-format: revealjs
 bibliography: ../refs.bib
 csl: ../american-meteorological-society.csl
-slide-number: true
 footer: "データ同化夏の学校2025"
+format:
+  revealjs:
+    slide-number: true
+    slide-navigation: true
+    controls: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    auto-stretch: false
 ---
 
 ## 線型カルマンフィルタ
