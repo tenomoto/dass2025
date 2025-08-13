@@ -1,0 +1,275 @@
+[
+  {
+    "objectID": "setup.html",
+    "href": "setup.html",
+    "title": "環境構築",
+    "section": "",
+    "text": "演習用プログラムは、Fortran および Python のプログラムを配布する。 実行には以下の環境が必要となる。"
+  },
+  {
+    "objectID": "setup.html#fortran",
+    "href": "setup.html#fortran",
+    "title": "環境構築",
+    "section": "Fortran",
+    "text": "Fortran\nノートパソコンに、Fortranコンパイラ (gfortranなど) を用意する。 配布プログラムはgfortran-14.2.0（Mac）、13.2.0（Windows）でコンパイル、実行ができることを確認した。 Fortran組込手続であるmatmulなどを用いて、線型代数ライブラがなくても進められるようにしているが、行列計算を行うにはOpenBLASなどの線型代数ライブラリを用意する。\nFortranプログラムの実行結果を可視化するために、1次元及び2次元のプロットができるアプリケーションが必要である。演習ではRで書かれたスクリプトを配布する。"
+  },
+  {
+    "objectID": "setup.html#python",
+    "href": "setup.html#python",
+    "title": "環境構築",
+    "section": "Python",
+    "text": "Python\nPythonは一般的なプログラミング言語であり、ライブラリを追加する必要がある。 数学函数や行列計算にはNumpyを用いる。 データの描画にはMatplotlibが一般的である。 ノートパソコンに、Python実行環境を準備する。 配布するスクリプトはPython3.12.5で作成した。"
+  },
+  {
+    "objectID": "setup.html#jupyter",
+    "href": "setup.html#jupyter",
+    "title": "環境構築",
+    "section": "Jupyter",
+    "text": "Jupyter\n職場や研究室のリモート環境やクラウドを用いることもできる。 Google ColaboratoryはGoogleアカウントがあれば無料で利用できる。 無償版は使用できる資源に制約がある。 ネットワーク環境の制約を受けることにも注意が必要である。\nGoogle ColaboratoryはJupyterのように、ウェブブラウザから使う。 Jupyterはノートパソコンに構築することもできる（Windows、Mac参照）。\nPython3をCPUで使うのが既定であるが、GPUを使ったり、Rを使うこともできる。 次のようにgfortranを使うこともできる。\n%%writefile hello.f90\nprint *, \"Hello, world!\"\nend\nシェルエスケープしてコンパイル、実行する。\n!gfortran -o hello hello.f90\n./hello"
+  },
+  {
+    "objectID": "setup.html#ターミナル",
+    "href": "setup.html#ターミナル",
+    "title": "環境構築",
+    "section": "ターミナル",
+    "text": "ターミナル\nWindowsは近年ターミナルやLinuxとの統合を強化している。黒い窓と呼ばれたDOS窓コマンドプロンプト（cmd.exe）でのMS-DOSに代わり、Windows 11や最新のWindowsではTerminalが既定の端末エミュレータである。 インストールされていない場合は、Microsoft Storeで検索してインストールする。\nMacには「アプリケーション/ユーティリティ」に、LaunchPadでは「その他」にある。"
+  },
+  {
+    "objectID": "setup.html#windows",
+    "href": "setup.html#windows",
+    "title": "環境構築",
+    "section": "Windows",
+    "text": "Windows\nWindowsでは、wingetを用いると簡単に環境構築ができる。\nPowershellはWindows PowerShellではなく、マルチプラットフォームのPowerShell 7以降を使う。 PowerShellをインストールして設定してみよう。 スタートメニューから「ターミナル」または「terminal」を検索して、タスクバーに追加する。起動すると、古いWindows PowerShellが起動する。PowerShell 7をインストールするように案内が表示される。\nwinget install Microsoft.PowerShell\nプロファイルが自動で作成されるので、これがWindowsターミナルを起動した時に選択されるように設定する。ウインドウのタイトルバーの下向き記号から設定を選択するか、Ctrl+,で設定画面を表示する。「スタートアップ」の「既定のプロファイル」から、青ではなく黒のPowerShellを選び、ウィンドウ右下の「保存」ボタンをクリックする。 \n\nPythonのインストール\nFortranを用いる場合は、飛ばして良い。\nwinget install Python.Python.3.12\n新しいタブを開くと、pythonにパスが通っている。 pythonから抜けるにはquit()とタイプする。\nPowerShell 7.4.4\npython\nPython 3.12.5 (tags/v3.12.5:ff3bc82, Aug  6 2024, 20:45:25) [MSC v.1940 64 bit (AMD64)] on win32\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n&gt;&gt;&gt; quit()\npipでNumpyとmatplotlibをインストールする。\npip install numpy matplotlib\n\n\nJupyterのインストール\njupyterをインストールする。\npip install jupyter\nJupyterLabまたはJupyter Notebookを起動すると、既定のブラウザに表示される。\njupyter notebook\n\n\nエディタのインストール\nソースコードを書くには、テキストエディタを用いる。必要なものを一つ入れる。\nwinget install Neovim.Neovim\nwinget install GNU.Emacs\nwinget install Microsoft.VisualStudioCode\n私はneovimを使っている。Neovim（コマンド名はnvim）を起動して:Tutorとタイプすると、チュートリアルが始まる。\n\n\ngfortranとRのインストール\nFortranでの計算結果の可視化にはRスクリプトを配布する。 R以外で描画する場合はRは不要であるが、gfortranを使うにはRの開発環境であるRToolsをインストールする。 RToolsにはMinGW-w64が含まれているが、最も手軽に開発環境を構築できる。 Numpyのソースからのインストールにも推奨されている。\nwinget install RProject.R\nwinget install RProject.Rtools\nパスを設定する。設定ファイルはドキュメント（パソコンのアカウントがMicrosoftアカウントと紐付けられている場合はOneDrive\\ドキュメント）のPowerShellフォルダの中のMicrosoft.PowerShell_profile.ps1に保存される。PowerShellフォルダがないと保存できないことがあるので、あらかじめ作成しておく。Neovimで編集する場合は次のようにする。\nnvim $profile\n$env:PATH += \"$env:ProgramFiles/R/R-4.4.1/bin/x64;\"\n$env:PATH += \"C:/rtools44/usr/bin;C:/rtools44/x86_w64-mingw32.static.posix/bin;\"\nRは1行目のパスに、makeは2行目の前者に、gfortranは後者にある。RはPowerShellでは、一つ前に投入したコマンドを呼び出すものであり、名前が衝突する。 Rを起動したいときは、R.exeと打鍵する。x86_w64-mingw32.static.posix`はプラットフォームに依存するので、ARM64では異なる。 別タブを開いてgfortranがあることを確認する。\ngfortran --version"
+  },
+  {
+    "objectID": "setup.html#mac",
+    "href": "setup.html#mac",
+    "title": "環境構築",
+    "section": "Mac",
+    "text": "Mac\nプログラミング習の範囲ではMacでも、公式サイトのPythonインストーラでよい。コンパイルが必要な外部ライブラリに依存する場合は、MacPortsを使ってインストールすることをお勧めする。Homebrewはネット上に多くの情報があるが、一貫した環境を提供するMacPortsを推す（Qiitaの解説）。MacPortsの既定のインストール先は/opt/localである。Homebrewは、Intel Macでは/usr/localに、インストールされるので、自分でコンパイルしたものと混在することになる。Apple Siliconでは（ついに学んだのか）/opt/homebrewにインストールされる。IntelからApple Siliconに乗り換えたときに面倒が起きそうである。\n\nMacPortsのインストール\nInstalling MacPortsに従って、次の手順でインストールする。\nOSを最新に更新した後、OSに応じたpkgインストーラ（アプリケーションをインストールする普通のインストーラ）を入手してMacPortsをインストールする。 インストーラは/opt/local/binを.zshrcに追加する。\n\nAppleのCommand Line Developer Toolsをインストールする。\n\nsudo xcode-select --install\n\n（オプション）App StoreからXcodeをインストールしライセンスに同意する。\n\nsudo xcodebuild -license\n\n（オプション）X11ウインドウ環境を用いる場合はxorg-serverポートをインストールする。\n\nsudo port install xorg-server\nインストールが済んだら、\nsudo port -v selfupdate\nを実行する。 portコマンドについては、man portまたはドキュメント参照。\n\n\nPythonのインストール\n複数のバージョンを共存させるために、Pythonのライブラリ名はpy312-numpyのようにPythonのバージョンが付されている。 python312は/opt/local/Library/Frameworks/Python.framework/Versions/3.12にインストールされる。\nsudo port install python312\nインストール後に表示されるメッセージにあるが、使用するバージョンをselectサブコマンドで選択する。\nsudo port select python python312\n次にNumpyとmatplotlibをインストールする。\nsudo port install py312-numpy py312-matplotlib\npython312を明示的にインストールしなてくも、Numpyやmatpotlibが依存するものとしてインストールされる。\n\n\nJupyterのインストール\nJupyterもMacPortsで簡単にインストールできる。\nsudo port install py312-jupyter\n\n\ngfortranとRのインストール\ngfortranはgccの一部として配布されている。\nsudo port install gcc14\ngccも複数のバージョンを共存させるため、gfortran-mp-14のようにバージョン番号をつけた実行ファイル名になっている。\nsudo port select gcc mp-gcc14\nを実行するとgcc14を既定としてgfortran-mp-14を指すエイリアスgfortranが/opt/local/binに作成される。\n描画に使う場合には、Rもインストールする。\nsudo port install R"
+  },
+  {
+    "objectID": "handson/index.html#lotka-volterraモデル",
+    "href": "handson/index.html#lotka-volterraモデル",
+    "title": "随伴モデルを作ってみよう",
+    "section": "Lotka-Volterraモデル",
+    "text": "Lotka-Volterraモデル\n\n捕食・被食モデル\n化学反応 (Lotka 1920)や魚種交替 (Volterra 1926)モデル\n海洋生態系（NPZ）モデル (Franks et al. 1986)\n積雲対流の自己組織化のモデル (Nober and Graf 2005)"
+  },
+  {
+    "objectID": "handson/index.html#支配方程式系",
+    "href": "handson/index.html#支配方程式系",
+    "title": "随伴モデルを作ってみよう",
+    "section": "支配方程式系",
+    "text": "支配方程式系\n二元連立非線型常微分方程式系\n\\[\n\\begin{aligned}\n\\frac{\\mathrm{d}x}{\\mathrm{d}t} &= x(a_1 + a_2x + a_3y) \\\\\n\\frac{\\mathrm{d}y}{\\mathrm{d}t} &= y(a_4 + a_5y + a_6x)\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "handson/index.html#変数の定義",
+    "href": "handson/index.html#変数の定義",
+    "title": "随伴モデルを作ってみよう",
+    "section": "変数の定義",
+    "text": "変数の定義\n\n\n\n\n\n\n\n\n\n変数\n定義\n単位\n標準値\n\n\n\n\n\\(x,\\,y\\)\n密度\n数\\(\\,\\mathrm{m}^{-2}\\)\n計算\n\n\n\\(a_1,\\,a_4\\)\n比増加率\n\\(\\mathrm{d}^{-1}\\)\n\\(4,-6\\)\n\n\n\\(a_2,\\,a_5\\)\n自己依存増加率\n\\((\\)数\\(\\,\\mathrm{m^{-2}})^{-1}\\mathrm{d}^{-1}\\)\n\\(-2, 2\\)\n\n\n\\(a_3,\\,a_6\\)\n相手依存増加率\n\\((\\)数\\(\\,\\mathrm{m^{-2}})^{-1}\\mathrm{d}^{-1}\\)\n\\(-4, 4\\)\n\n\n\\(x_1,\\, y_1\\)\n初期密度\n数\\(\\,\\mathrm{m}^{-2}\\)\n\\(1, 1\\)"
+  },
+  {
+    "objectID": "handson/index.html#離散化",
+    "href": "handson/index.html#離散化",
+    "title": "随伴モデルを作ってみよう",
+    "section": "離散化",
+    "text": "離散化\n\\[\n\\begin{aligned}\n\\frac{\\mathrm{d}x}{\\mathrm{d}t} &= x(a_1 + a_2x + a_3y) \\\\\n\\frac{\\mathrm{d}y}{\\mathrm{d}t} &= y(a_4 + a_5y + a_6x)\n\\end{aligned}\n\\]\n\nFortranPython\n\n\ndo n = 1, nmax-1\n  x(n+1) = x(n) + dt * (x(n) * (a(1) + a(2) * x(n) + a(3) * y(n)))\n  y(n+1) = y(n) + dt * (y(n) * (a(4) + a(5) * y(n) + a(6) * x(n)))\nend do\n\n\nfor i in range(nmax-1):\n    x[n+1] = x[n] + dt * (x[n] * (a[0] + a[1] * x[n] + a[2] * y[n]))\n    y[n+1] = y[n] + dt * (y[n] * (a[3] + a[4] * y[n] + a[5] * x[n]))"
+  },
+  {
+    "objectID": "handson/index.html#時間発展",
+    "href": "handson/index.html#時間発展",
+    "title": "随伴モデルを作ってみよう",
+    "section": "時間発展",
+    "text": "時間発展\n\n15日間の時間発展\ndt = 0.001, nmax = 15001"
+  },
+  {
+    "objectID": "handson/index.html#位相平面",
+    "href": "handson/index.html#位相平面",
+    "title": "随伴モデルを作ってみよう",
+    "section": "位相平面",
+    "text": "位相平面"
+  },
+  {
+    "objectID": "handson/index.html#おさらい",
+    "href": "handson/index.html#おさらい",
+    "title": "随伴モデルを作ってみよう",
+    "section": "おさらい",
+    "text": "おさらい\n\n変分法データ同化では入力（初期値やパラメタ）を推定\n出力（予測値）と観測との乖離（コスト函数）の最小化\nコスト函数の入力についての勾配を用いて最適化\n随伴を求めてから離散化か、離散化してから随伴か。\n直接勾配が計算できないので連鎖律を利用する。\nLagrangeの未定乗数を用いる方法 (Lawson et al. 1995)"
+  },
+  {
+    "objectID": "handson/index.html#lagrangeの未定乗数法",
+    "href": "handson/index.html#lagrangeの未定乗数法",
+    "title": "随伴モデルを作ってみよう",
+    "section": "Lagrangeの未定乗数法",
+    "text": "Lagrangeの未定乗数法\n\nモデル\\(F(X, Z, ...)\\)、制御変数 \\(X\\)、状態変数 \\(Z\\)\n各ステップの未定乗数 \\(\\lambda_n\\) を随伴モデルから求める。\n\\(\\lambda_n\\) と \\(Z\\) に関するモデルの微分の積の総和\n各ステップでは以下を計算\n\n\\[\n\\lambda_X = \\lambda_X + \\lambda_Z\\frac{\\partial F}{\\partial X}\n\\]"
+  },
+  {
+    "objectID": "handson/index.html#制御変数と状態変数随伴変数",
+    "href": "handson/index.html#制御変数と状態変数随伴変数",
+    "title": "随伴モデルを作ってみよう",
+    "section": "制御変数と状態変数、随伴変数",
+    "text": "制御変数と状態変数、随伴変数\n\n制御変数は \\(X \\equiv (x_1,\\,y_1,\\,a_1,\\,a_2,\\,a_3,\\,a_4,\\,a_5,\\,a_6)^\\mathrm{T}\\)\n状態変数は \\(Z \\equiv (x, y)^\\mathrm{T}\\)\nパラメタ数の長さ6の1次元配列 a\nステップ数の長さnmaxの1次元配列 x\na の随伴変数は a をつけた長さ6の1次元配列 aa\nx と y の随伴変数は、それぞれ ax と ay"
+  },
+  {
+    "objectID": "handson/index.html#随伴モデル作成のルール",
+    "href": "handson/index.html#随伴モデル作成のルール",
+    "title": "随伴モデルを作ってみよう",
+    "section": "随伴モデル作成のルール",
+    "text": "随伴モデル作成のルール\n\n時間を逆行するので、コードを逆順に辿る。\nループは逆に回す。\n順行コードの右辺を制御変数 a_6 で微分する。\n微分に状態変数の随伴 ay を掛ける。\nこれを制御変数の随伴 a_6 に足し込む。\n制御変数 y が複数回出てきたら、それぞれ微分する。\n全ての制御変数について行う。\n随伴変数は0に初期化する。"
+  },
+  {
+    "objectID": "handson/index.html#捕食者パラメタの随伴",
+    "href": "handson/index.html#捕食者パラメタの随伴",
+    "title": "随伴モデルを作ってみよう",
+    "section": "捕食者パラメタの随伴",
+    "text": "捕食者パラメタの随伴\n\\[\n\\frac{\\mathrm{d}y}{\\mathrm{d}t} = y(a_4 + a_5y + a_6x)\n\\]\n\nFortranPython\n\n\n! y(n+1) = y(n) + dt * (y(n) * (a(4) + a(5) * y(n) + a(6) * x(n)))\naa(6) = aa(6) + dt * x(n) * y(n) * ay(n+1)\naa(5) = aa(5) + dt * y(n) * y(n) * ay(n+1)\naa(4) = aa(4) + dt * y(n) * ay(n+1)\n\n\n# y[n+1] = y[n] + dt * (y[n] * (a[3] + a[4] * y[n] + a[5] * x[n]))\naa[5] = aa[5] + dt * x[n] * y[n] * ay[n+1]\naa[4] = aa[4] + dt * y[n] * y[n] * ay[n+1]\naa[3] = aa[3] + dt * y[n] * ay[n+1]"
+  },
+  {
+    "objectID": "handson/index.html#状態変数の随伴",
+    "href": "handson/index.html#状態変数の随伴",
+    "title": "随伴モデルを作ってみよう",
+    "section": "状態変数の随伴",
+    "text": "状態変数の随伴\n\\[\n\\frac{\\mathrm{d}y}{\\mathrm{d}t} = y(a_4 + a_5y + a_6x)\n\\]\n\nFortranPython\n\n\n! y(n+1) = y(n) + dt * (y(n) * (a(4) + a(5) * y(n) + a(6) * x(n)))\nax(n) = ax(n) + dt * a(6) * y(n) * ay(n+1)\nay(n) = ay(n) + dt * a(5) * y(n) * ay(n+1)\nay(n) = ay(n) + (1 + dt * (a(4) + a(5) * y(n) + a(6) * x(n))) * ay(n+1)\n\n\n# y[n+1] = y[n] + dt * (y[n] * (a[3] + a[4] * y[n] + a[5] * x[n]))\nax[n] &lt;- ax[n] + dt * a[5] * y[n] * ay[n+1]\nay[n] &lt;- ay[n] + dt * a[4] * y[n] * ay[n+1]\nay[n] &lt;- ay[n] + (1 + dt * (a[3] + a[4] * y[n] + a[5] * x[n])) * ay[n+1]"
+  },
+  {
+    "objectID": "handson/index.html#被食者パラメタの随伴",
+    "href": "handson/index.html#被食者パラメタの随伴",
+    "title": "随伴モデルを作ってみよう",
+    "section": "被食者パラメタの随伴",
+    "text": "被食者パラメタの随伴\n\\[\n\\frac{\\mathrm{d}x}{\\mathrm{d}t} = x(a_1 + a_2x + a_3y)\n\\]\n\nFortranPython\n\n\n! x(n+1) = x(n) + dt * (x(n) * (a(1) + a(2) * x(n) + a(3) * y(n)))\naa(3) = aa(3) + dt * y(n) * x(n) * ax(n+1)\naa(2) = aa(2) + dt * x(n) * x(n) * ax(n+1)\naa(1) = aa(1) + dt * x(n) * ax(n+1)\n\n\n# x[n+1] = x[n] + dt * (x[n] * (a[0] + a[1] * x[n] + a[2] * y[n]))\naa[2] = aa[2] + dt * y[n] * x[n] * ax[n+1]\naa[1] = aa[1] + dt * x[n] * x[n] * ax[n+1]\naa[0] = aa[0] + dt * x[n] * ax[n+1]"
+  },
+  {
+    "objectID": "handson/index.html#状態変数の随伴-1",
+    "href": "handson/index.html#状態変数の随伴-1",
+    "title": "随伴モデルを作ってみよう",
+    "section": "状態変数の随伴",
+    "text": "状態変数の随伴\n\\[\n\\frac{\\mathrm{d}x}{\\mathrm{d}t} = x(a_1 + a_2x + a_3y)\n\\]\n\nFortranPython\n\n\n! x(n+1) = x(n) + dt * (x(n) * (a(1) + a(2) * x(n) + a(3) * y(n)))\nay(n) = ay(n) + dt * a(3) * x(n) * ax(n+1)\nax(n) = ax(n) + dt * a(2) * x(n) * ax(n+1)\nax(n) = ax(n) + (1 + dt * (a(1) + a(2) * x(n) + a(3) * y(n))) * ax(n+1)\n\n\n# x[n+1] = x[n] + dt * (x[n] * (a[0] + a[1] * x[n] + a[2] * y[n]))\nay[n] = ay[n] + dt * a[2] * x[n] * ax[n+1]\nax[n] = ax[n] + dt * a[1] * x[n] * ax[n+1]\nax[n] = ax[n] + (1 + dt * (a[0] + a[1] * x[n] + a[2] * y[n])) * ax[n+1]"
+  },
+  {
+    "objectID": "handson/index.html#随伴モデル",
+    "href": "handson/index.html#随伴モデル",
+    "title": "随伴モデルを作ってみよう",
+    "section": "随伴モデル",
+    "text": "随伴モデル\n\nFortranPython\n\n\naa(:) = 0d0\nax(:) = 0d0\nay(:) = 0d0\ndo nmax-1, 1, -1\n  aa(6) = aa(6) + dt * x(n) * y(n) * ay(n+1)\n  aa(5) = aa(5) + dt * y(n) * y(n) * ay(n+1)\n  aa(4) = aa(4) + dt * y(n) * ay(n+1)\n  ax(n) = ax(n) + dt * a(6) * y(n) * ay(n+1)\n  ay(n) = ay(n) + dt * a(5) * y(n) * ay(n+1)\n  ay(n) = ay(n) + (1 + dt * (a(4) + a(5) * y(n) + a(6) * x(n))) * ay(n+1)\n  aa(3) = aa(3) + dt * y(n) * x(n) * ax(n+1)\n  aa(2) = aa(2) + dt * x(n) * x(n) * ax(n+1)\n  aa(1) = aa(1) + dt * x(n) * ax(n+1)\n  ay(n) = ay(n) + dt * a(3) * x(n) * ax(n+1)\n  ax(n) = ax(n) + dt * a(2) * x(n) * ax(n+1)\n  ax(n) = ax(n) + (1 + dt * (a(1) + a(2) * x(n) + a(3) * y(n))) * ax(n+1)\nend do\n\n\naa = np.zeros(6)\nax = np.zeros(nmax)\nay = np.zeros(nmax)\nfor i in reversed(range(nmax-1)):\n    aa[5] = aa[5] + dt * x[n] * y[n] * ay[n+1]\n    aa[4] = aa[4] + dt * y[n] * y[n] * ay[n+1]\n    aa[3] = aa[3] + dt * y[n] * ay[n+1]\n    ax[n] = ax[n] + dt * a[5] * y[n] * ay[n+1]\n    ay[n] = ay[n] + dt * a[4] * y[n] * ay[n+1]\n    ay[n] = ay[n] + (1 + dt * (a[3] + a[4] * y[n] + a[5] * x[n])) * ay[n+1]\n    aa[2] = aa[2] + dt * y[n] * x[n] * ax[n+1]\n    aa[1] = aa[1] + dt * x[n] * x[n] * ax[n+1]\n    aa[0] = aa[0] + dt * x[n] * ax[n+1]\n    ay[n] = ay[n] + dt * a[2] * x[n] * ax[n+1]\n    ax[n] = ax[n] + dt * a[1] * x[n] * ax[n+1]\n    ax[n] = ax[n] + (1 + dt * (a[0] + a[1] * x[n] + a[2] * y[n])) * ax[n+1]"
+  },
+  {
+    "objectID": "handson/index.html#数値最適化",
+    "href": "handson/index.html#数値最適化",
+    "title": "随伴モデルを作ってみよう",
+    "section": "数値最適化",
+    "text": "数値最適化\n\n得られた aa や ax、ayはコスト函数の初期勾配\n最急降下法 \\[\nX^{(i+1)} = X^{(i)} - \\alpha\\nabla_{X(0)}J\n\\]\n勾配を用いる共軛勾配法や準ニュートン法\nscipy.optimize\nNocedal L-BFGS CG+\nNLopt"
+  },
+  {
+    "objectID": "handson/index.html#課題",
+    "href": "handson/index.html#課題",
+    "title": "随伴モデルを作ってみよう",
+    "section": "課題",
+    "text": "課題\n\n捕食・被食モデルの時間発展（スライド6）を調べる。\n\n初期状態やパラメタを変えてみよう。\n位相空間にプロットする（スライド7）。\n\n随伴モデルを作成する。\n\n異なる初期値とから真の初期値を復元する。\n異なる初期値とパラメタから真値を復元する。\n最適化手法を変えてみる。\n背景誤差や観測誤差を考慮する。"
+  },
+  {
+    "objectID": "handson/index.html#参考文献",
+    "href": "handson/index.html#参考文献",
+    "title": "随伴モデルを作ってみよう",
+    "section": "参考文献",
+    "text": "参考文献\n\n\n\n\n\n\n\nFranks, P. J. S., J. S. Wroblewski, and G. R. Flierl, 1986: Behavior of a simple plankton model with food-level acclimation by herbivores. Marine Biol., 91, 121–129, https://doi.org/10.1007/BF00397577.\n\n\nLawson, L. M., Y. H. Spitz, E. E. Hofmann, and R. B. Long, 1995: A data assimilation technique applied to a predator-prey model. Bull. Math. Biol., 57, 593–617, https://doi.org/10.1016/S0092-8240(05)80759-1.\n\n\nLotka, A. J., 1920: Analytical note on certain rhythmic relations in organic systems. PNAS, 6, 410–415, https://doi.org/10.1073/pnas.6.7.410.\n\n\nNober, F. J., and H. F. Graf, 2005: A new convective cloud field model based on principles of self-organisation. Atmos. Chem. Phys., 5, 2749–2759, https://doi.org/10.5194/acp-5-2749-2005.\n\n\nVolterra, V., 1926: Fluctuations in the abundance of a species considered mathematically. Nature, 118, 558–560, https://doi.org/10.1038/118558a0."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "データ同化夏の学校2025 初級課題",
+    "section": "",
+    "text": "随伴モデルを作ってみよう"
+  },
+  {
+    "objectID": "index.html#随伴モデルを作ってみよう",
+    "href": "index.html#随伴モデルを作ってみよう",
+    "title": "データ同化夏の学校2025 初級課題",
+    "section": "",
+    "text": "随伴モデルを作ってみよう"
+  },
+  {
+    "objectID": "index.html#リンク",
+    "href": "index.html#リンク",
+    "title": "データ同化夏の学校2025 初級課題",
+    "section": "リンク",
+    "text": "リンク"
+  },
+  {
+    "objectID": "index.html#拡張カルマンフィルタ",
+    "href": "index.html#拡張カルマンフィルタ",
+    "title": "データ同化夏の学校2025 初級課題",
+    "section": "拡張カルマンフィルタ",
+    "text": "拡張カルマンフィルタ\n\n\n\n拡張カルマンフィルタ"
+  },
+  {
+    "objectID": "index.html#リンク-1",
+    "href": "index.html#リンク-1",
+    "title": "データ同化夏の学校2025 初級課題",
+    "section": "リンク",
+    "text": "リンク\n\n海洋データ同化夏の学校\nソース"
+  },
+  {
+    "objectID": "ekf/index.html#線型カルマンフィルタ",
+    "href": "ekf/index.html#線型カルマンフィルタ",
+    "title": "カルマンフィルタ",
+    "section": "線型カルマンフィルタ",
+    "text": "線型カルマンフィルタ\n\\[\n\\begin{aligned}\n\\mathbf{x}^\\mathrm{f}(t_{i+1}) &= \\mathbf{M}(t_{i+1},\\,t_i)\\mathbf{x}^\\mathrm{a}\\\\\n\\mathbf{P}^\\mathrm{f}(t_{i+1}) &= \\mathbf{M}(t_{i+1},\\,t_i)\\mathbf{P}^\\mathrm{a}(t_{i})\\mathbf{M}^\\mathrm{T}(t_{i+1},\\,t_i) + \\mathbf{Q}(t_i)\\\\\n\\mathbf{K}_i &= \\mathbf{P}^\\mathrm{f}(t_i)\\mathbf{H}_i^\\mathrm{T}[\\mathbf{H}_i\\mathbf{P}^\\mathrm{f}(t_i)\\mathbf{H}_i^\\mathrm{T} + \\mathbf{R}_i]^{-1}\\\\\n\\mathbf{x}^\\mathrm{a}(t_i) &= \\mathbf{x}^\\mathrm{f}(t_i) + \\mathbf{K}_i[\\mathbf{y}_i^\\mathrm{o} - \\mathbf{H}_i\\mathbf{x}^\\mathrm{f}(t_i)]\\\\\n\\mathbf{P}^\\mathrm{a}(t_i) &= [\\mathbf{I} - \\mathbf{K}_i\\mathbf{H}_i]\\mathbf{P}^\\mathrm{f}(t_i)\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "ekf/index.html#拡張カルマンフィルタ",
+    "href": "ekf/index.html#拡張カルマンフィルタ",
+    "title": "カルマンフィルタ",
+    "section": "拡張カルマンフィルタ",
+    "text": "拡張カルマンフィルタ\nEKF: extended Kalman filter\n状態の予報と解析にそれぞれ非線型の\\(M\\)と\\(H\\)を用いる。\n\\[\n\\begin{aligned}\n\\mathbf{x}^\\mathrm{f}(t_{i+1}) &= \\color{red}{M_{t_{i+1},\\,t_i}(\\mathbf{x}^\\mathrm{a})}\\\\\n\\mathbf{P}^\\mathrm{f}(t_{i+1}) &= \\mathbf{M}(t_{i+1},\\,t_i)\\mathbf{P}^\\mathrm{a}(t_{i})\\mathbf{M}^\\mathrm{T}(t_{i+1},\\,t_i) + \\mathbf{Q}(t_i)\\\\\n\\mathbf{K}_i &= \\mathbf{P}^\\mathrm{f}(t_i)\\mathbf{H}_i^\\mathrm{T}[\\mathbf{H}_i\\mathbf{P}^\\mathrm{f}(t_i)\\mathbf{H}_i^\\mathrm{T} + \\mathbf{R}_i]^{-1}\\\\\n\\mathbf{x}^\\mathrm{a}(t_i) &= \\mathbf{x}^\\mathrm{f}(t_i) + \\mathbf{K}_i[\\mathbf{y}_i^\\mathrm{o} - \\color{red}{H_i(\\mathbf{x}^\\mathrm{f}(t_i))}]\\\\\n\\mathbf{P}^\\mathrm{a}(t_i) &= [\\mathbf{I} - \\mathbf{K}_i\\mathbf{H}_i]\\mathbf{P}^\\mathrm{f}(t_i)\n\\end{aligned}\n\\]"
+  },
+  {
+    "objectID": "ekf/index.html#ekfの特徴",
+    "href": "ekf/index.html#ekfの特徴",
+    "title": "カルマンフィルタ",
+    "section": "EKFの特徴",
+    "text": "EKFの特徴\n\n\\(\\mathbf{x}_i\\) に関して力学及び観測モデルを線型化。\n非線型な解の軌道 \\(\\mathbf{x}\\) の近傍で \\(\\mathbf{P}\\) の時間発展を追う。\n入力は初期状態 \\((\\mathbf{x},\\,\\mathbf{P})\\) 、一連の観測 \\(\\mathbf{y}^\\mathrm{o}\\) 、 モデル及び観測誤差共分散 \\((\\mathbf{Q},\\,\\mathbf{R})\\)。\n出力は状態 \\((\\mathbf{x},\\,\\mathbf{P})\\) の推定値。\nモデルが線型ならば最適、非線型なら近似。"
+  },
+  {
+    "objectID": "ekf/index.html#dvarとekfとの比較",
+    "href": "ekf/index.html#dvarとekfとの比較",
+    "title": "カルマンフィルタ",
+    "section": "4DVarとEKFとの比較",
+    "text": "4DVarとEKFとの比較\n\nモデル誤差を無視すると、同化窓の終端で4DVarと同一で、4DVarのコスト函数においてEKFは最適。\n4DVarの方がEKFよりも計算負荷が小さい。\n4DVarは同化窓の中でEKFよりも最適で滑らか。\n4DVarは完全モデルを仮定、EKFはモデル誤差を考慮。\n4DVarは同化窓の範囲に限定、EKFは連続的に解析可。\nEKFは誤差共分散の推定値を与える。"
+  },
+  {
+    "objectID": "ekf/index.html#実装上の課題",
+    "href": "ekf/index.html#実装上の課題",
+    "title": "カルマンフィルタ",
+    "section": "実装上の課題",
+    "text": "実装上の課題\n\n行列のサイズ。\\(\\mathbf{P},\\,\\mathbf{Q}\\text{:}\\,n\\times n,\\,\\mathbf{R}\\text{:}\\,p \\times p\\), \\(\\mathbf{K}\\text{:}\\,n\\times p\\)\n誤差共分散の予報は力学モデルの予報の \\(n\\) 回に相当。\n\\(\\mathbf{K}\\) に \\(p\\times p\\) の逆行列\n\\(\\mathbf{P}\\) の正定値性と要素の小ささの維持。"
+  },
+  {
+    "objectID": "ekf/index.html#実装上の工夫",
+    "href": "ekf/index.html#実装上の工夫",
+    "title": "カルマンフィルタ",
+    "section": "実装上の工夫",
+    "text": "実装上の工夫\n\n誤差共分散の解析を対称にする(Bouttier 1994)。\n\n\\[\n\\mathbf{P}^\\mathrm{a} = [\\mathbf{I} - \\mathbf{K}\\mathbf{H}]\\mathbf{P}^\\mathrm{f}[\\mathbf{I} - \\mathbf{K}\\mathbf{H}]^\\mathrm{T} + \\mathbf{KRK}^\\mathrm{T}\n\\]\n\n\\(\\mathbf{M}^\\mathrm{T}\\) と明示的な \\(\\mathbf{M}\\) を不要にする(Gauthier et al. 1993)。\n\n\\[\n\\mathbf{MPM}^\\mathrm{T} = \\mathbf{M}(\\mathbf{MP})^\\mathrm{T}\n\\]"
+  },
+  {
+    "objectID": "ekf/index.html#接線型モデル",
+    "href": "ekf/index.html#接線型モデル",
+    "title": "カルマンフィルタ",
+    "section": "接線型モデル",
+    "text": "接線型モデル\n\\[\n\\begin{aligned}\n\\frac{\\mathrm{d}x}{\\mathrm{d}t} &= x(a_1 + a_2x + a_3y) \\\\\n\\frac{\\mathrm{d}y}{\\mathrm{d}t} &= y(a_4 + a_5y + a_6x)\n\\end{aligned}\n\\]\n\nFortranPython\n\n\ndxdt = dx * (a(1) + 2 * a(2) + a(3) * y) + dy * x * a(3)\ndydt = dx * y * a(6) + dy * (a(4) + 2 * a(5) * y + a(6) * x)\ndx = dx + dxdt * dt\ndy = dy + dydt * dt\n\n\ndxdt = dx * (a[0] + 2 * a[1] + a[2] * y) + dy * x * a[2]\ndydt = dx * y * a[5] + dy * (a[3] + 2 * a[4] + a[5] * x)\ndx += dxdt * dt\ndy += dydt * dt"
+  },
+  {
+    "objectID": "ekf/index.html#課題",
+    "href": "ekf/index.html#課題",
+    "title": "カルマンフィルタ",
+    "section": "課題",
+    "text": "課題\n\nスライド3と7を参考にEKFを作ろう。\n\nモデルの線型化はウィンドウの最初の時刻で行う。\nモデルバイアス \\(\\mathbf{Q}\\) は固定とする。\nスライド7の工夫を取り入れる。\n\nEKFで初期値 \\((2,\\,2)\\) から開始し、 \\((1,\\,1)\\) から始めた真値の時間発展に漸近するか確認しよう。\n\n真値及び実験の初期値や誤差共分散、モデルバイアスの分散、観測ノイズ、観測間隔などに対する依存性について調べてみよう。"
+  },
+  {
+    "objectID": "ekf/index.html#参考文献",
+    "href": "ekf/index.html#参考文献",
+    "title": "カルマンフィルタ",
+    "section": "参考文献",
+    "text": "参考文献\nBouttier (1995)\n\n\n\n\n\n\n\nBouttier, F., 1994: A dynamical estimation of forecast error covariances in an assimilation system. Mon. Wea. Rev., 122, 2376–2390, https://doi.org/10.1175/1520-0493(1994)122&lt;2376:ADEOFE&gt;2.0.CO;2.\n\n\n——, 1995: The Kalman filter. Annual seminar on predictability, Reading, UK, European Centre for Medium-Range Weather Forecasts, 221–245.\n\n\nGauthier, P., P. Courtier, and P. Moll, 1993: Assimilation of simulated wind lidar data with a Kalman filter. Mon. Wea. Rev., 121, 1803–1820, https://doi.org/10.1175/1520-0493(1993)121&lt;1803:AOSWLD&gt;2.0.CO;2."
+  }
+]
