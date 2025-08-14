@@ -62,8 +62,8 @@ nmax <- 501
 dt <- 0.001
 at <- c(4, -2, -4, -6, 2, 4)
 w1 <- c(1, 1, at)
-iobs1 <- 2
-dobs <- 2
+iobs1 <- 10
+dobs <- 10
 tobs <- seq(iobs1, nmax, by = dobs)
 ntobs <- length(tobs)
 wt <- forward(w1, dt, nmax)
@@ -85,7 +85,7 @@ hfunc <- function(x) x
 hmat <- cbind(diag(1, 2, 2), matrix(0, 2, 6))
 sb <- 0.1
 sr <- 0.1
-sa <- 1
+sa <- 0.1
 pamat <- rbind(cbind(diag(sb^2, 2, 2), matrix(0, 2, 6)),
                cbind(matrix(0, 6, 2), diag(sa^2, 6, 6)))
 rmat <- diag(sr^2, 2, 2)

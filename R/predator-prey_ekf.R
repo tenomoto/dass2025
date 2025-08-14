@@ -69,16 +69,9 @@ ntobs <- length(tobs)
 wt <- forward(w1, dt, nmax)
 yo <- wt[, tobs]
 
-a <- c(1, 0, 0, -1, 0, 0)
+#a <- c(1, 0, 0, -1, 0, 0)
 a <- at
 xa <- c(2, 2, a)
-x_hist <- numeric(0)
-y_hist <- numeric(0)
-t_hist <- numeric(0)
-xf_hist <- rep(0, ntobs)
-yf_hist <- rep(0, ntobs)
-xa_hist <- rep(0, ntobs)
-ya_hist <- rep(0, ntobs)
 
 hfunc <- function(x) x
 hmat <- diag(1, 2, 2)
@@ -87,8 +80,18 @@ sr <- 0.1
 pamat <- diag(sb^2, 2, 2)
 rmat <- diag(sr^2, 2, 2)
 sq <- 0.2
-q <- rnorm(2, 0, sq)
-qmat <- outer(q, q)
+#q <- rnorm(2, 0, sq)
+#qmat <- outer(q, q)
+qmat <- diag(sq, 2, 2)
+
+x_hist <- numeric(0)
+y_hist <- numeric(0)
+t_hist <- numeric(0)
+xf_hist <- rep(0, ntobs)
+yf_hist <- rep(0, ntobs)
+xa_hist <- rep(0, ntobs)
+ya_hist <- rep(0, ntobs)
+
 
 n <- 1
 for (t in 1:ntobs) {
