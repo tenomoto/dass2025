@@ -25,27 +25,9 @@ calc_jacobian <- function(w, dt) {
   diag(8) + dt * mmat
 }
 
-predict_covariance <- function(mmat, pamat, qmat) {
-  mmat %*% pamat %*% t(mmat) + qmat
-}
-
-calc_gain <- function(pfmat, hmat, rmat) {
-  pfmat %*% t(hmat) %*% solve(hmat %*% pfmat %*% t(hmat) + rmat)
-}
-
-analyze_state <- function(w, kmat, yo, hfunc) {
-  w + kmat %*% (yo - hfunc(w))
-}
-
-analyze_covariance <- function(pfmat, kmat, hmat, rmat) {
-  n <- nrow(pfmat)
-  ikhmat <- diag(n) - kmat %*% hmat
-  ikhmat %*% pfmat %*% t(ikhmat) + kmat %*% rmat %*% t(kmat)
-}
-
 seed <- 514
 set.seed(seed)
-nmax <- 501
+nmax <- 500
 dt <- 0.001
 at <- c(4, -2, -4, -6, 2, 4)
 w1 <- c(1, 1, at)
@@ -76,21 +58,25 @@ t_hist <- numeric(0)
 n <- 0
 for (t in 1:ntobs) {
   nf <- tobs[t] - n + 1
-  t_hist <- c(t_hist, n:tobs[t], tobs[t])
+  t_hist <- c(t_hist, n:tobs[t])
   xf <- predict_state(xa, dt = dt, nmax = nf)
   mmat <- diag(2)
   for (i in 1:(nf - 1)) {
     mmat <- calc_jacobian(c(xf[, i], a), dt)[1:2, 1:2] %*% mmat
   }
-  pfmat <- predict_covariance(mmat, pamat, qmat)
-  kmat <- calc_gain(pfmat, hmat, rmat)
-  xa <- analyze_state(xf[1:2, nf], kmat, yo[, t], hfunc)
+  pfmat <- mmat %*% pamat %*% t(mmat) + qmat
+  kmat <- pfmat %*% t(hmat) %*% solve(hmat %*% pfmat %*% t(hmat) + rmat)
+  xa <- xf[1:2, nf] + kmat %*% (yo[, t] - hfunc(xf[1:2, nf]))
   xa <- c(xa, a)
-  pamat <- analyze_covariance(pfmat, kmat, hmat, rmat)
-  x_hist <- c(x_hist, xf[1, ], xa[1])
-  y_hist <- c(y_hist, xf[2, ], xa[2])
+  ikhmat <- diag(nrow(pfmat)) - kmat %*% hmat
+  pamat <- ikhmat %*% pfmat %*% t(ikhmat) + kmat %*% rmat %*% t(kmat)
+  x_hist <- c(x_hist, xf[1, ])
+  y_hist <- c(y_hist, xf[2, ])
   n <- tobs[t]
 }
+t_hist <- c(t_hist, n)
+x_hist <- c(x_hist, xa[1])
+y_hist <- c(y_hist, xa[2])
 
 plot(t_hist, x_hist, type = "l", lwd = 1, xlab = "t", ylab = "x, y",
      ylim = c(0, 2))

@@ -7,10 +7,11 @@ title: 環境構築
 ## Fortran
 
 ノートパソコンに、Fortranコンパイラ (gfortranなど) を用意する。
-配布プログラムはgfortran-14.2.0（Mac）、13.2.0（Windows）でコンパイル、実行ができることを確認した。
-Fortran組込手続である`matmul`などを用いて、線型代数ライブラがなくても進められるようにしているが、行列計算を行うには[OpenBLAS](https://www.openblas.net/)などの線型代数ライブラリを用意する。
+配布プログラムはgfortran-14.2.0でコンパイル、実行ができることを確認した。
+行列積にはFortran組込手続である`matmul`などを用いているので、線型代数ライブラリは不要が、行列計算を行うには線型代数ライブラリを用意する。
+[OpenBLAS](https://www.openblas.net/)などを導入してもよいが、以下ではRtoolsに含まれるLAPACKを利用する。
 
-Fortranプログラムの実行結果を可視化するために、1次元及び2次元のプロットができるアプリケーションが必要である。演習ではRで書かれたスクリプトを配布する。
+Fortranプログラムの実行結果を可視化するために、プロットができるアプリケーションが必要である。演習ではRで書かれたスクリプトを配布する。
 
 ## Python
 
@@ -20,17 +21,14 @@ Pythonは一般的なプログラミング言語であり、ライブラリを�
 ノートパソコンに、Python実行環境を準備する。
 配布するスクリプトはPython3.12.5で作成した。
 
-## Jupyter
+## Google Colaboratory
 
-職場や研究室のリモート環境やクラウドを用いることもできる。
+Google Colaboratoryは、ウェブブラウザから使う。
 [Google Colaboratory](https://colab.research.google.com/)はGoogleアカウントがあれば無料で利用できる。
 無償版は使用できる資源に制約がある。
 ネットワーク環境の制約を受けることにも注意が必要である。
 
-Google Colaboratoryは[Jupyter](https://jupyter.org/)のように、ウェブブラウザから使う。
-Jupyterはノートパソコンに構築することもできる（[Windows](#sec-jupyter-win)、[Mac](#sec-jupyter-mac)参照）。
-
-Python3をCPUで使うのが既定であるが、GPUを使ったり、Rを使うこともできる。
+Python3をCPUで使うのが既定であるが、GPUを使ったり、RやJuliaを使うこともできる。
 次のようにgfortranを使うこともできる。
 
 ```jupyter
@@ -48,6 +46,12 @@ end
 ```jupyter
 ./hello
 ```
+
+## Jupyter
+
+[Jupyter](https://jupyter.org/)もウェブブラウザから用いるが、
+ノートパソコンに構築することもできる（[Windows](#sec-jupyter-win)、[Mac](#sec-jupyter-mac)参照）。
+
 
 ## ターミナル
 
@@ -76,16 +80,16 @@ winget install Microsoft.PowerShell
 Fortranを用いる場合は、飛ばして良い。
 
 ```powershell
-winget install Python.Python.3.12
+winget install Python.Python.3.13
 ```
 
 新しいタブを開くと、pythonにパスが通っている。
 pythonから抜けるには`quit()`とタイプする。
 
 ```powershell
-PowerShell 7.4.4
+PowerShell 7.5.2
 python
-Python 3.12.5 (tags/v3.12.5:ff3bc82, Aug  6 2024, 20:45:25) [MSC v.1940 64 bit (AMD64)] on win32
+Python 3.12.5 (tags/v3.13.7:bceelc3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)] on win32
 Type "help", "copyright", "credits" or "license" for more information.
 >>> quit()
 ```
@@ -124,9 +128,9 @@ winget install Microsoft.VisualStudioCode
 ### gfortranとRのインストール
 
 Fortranでの計算結果の可視化にはRスクリプトを配布する。
-R以外で描画する場合はRは不要であるが、gfortranを使うにはRの開発環境であるRToolsをインストールする。
-RToolsにはMinGW-w64が含まれているが、最も手軽に開発環境を構築できる。
-Numpyの[ソースからのインストール](https://numpy.org/doc/stable/building/index.html)にも推奨されている。
+R以外で描画する場合はRは不要であるが、gfortranやLAPCKを使うため、Rの開発環境であるRToolsをインストールする。
+RToolsにはMinGW-w64が含まれており、最も手軽に開発環境を構築できる。
+（Numpyの[ソースからのインストール](https://numpy.org/doc/stable/building/index.html)にも推奨されている。）
 
 ```powershell
 winget install RProject.R
@@ -140,8 +144,8 @@ nvim $profile
 ```
 
 ```powershell
-$env:PATH += "$env:ProgramFiles/R/R-4.4.1/bin/x64;"
-$env:PATH += "C:/rtools44/usr/bin;C:/rtools44/x86_w64-mingw32.static.posix/bin;"
+$env:PATH += "$env:ProgramFiles/R/R-4.5.1/bin/x64;"
+$env:PATH += "C:/rtools45/usr/bin;C:/rtools45/x86_w64-mingw32.static.posix/bin;"
 ```
 
 `R`は1行目のパスに、make`は2行目の前者に、`gfortran`は後者にある。
@@ -155,7 +159,9 @@ gfortran --version
 
 ## Mac
 
-プログラミング習の範囲ではMacでも、公式サイトのPythonインストーラでよい。コンパイルが必要な外部ライブラリに依存する場合は、[MacPorts](https://www.macports.org/)を使ってインストールすることをお勧めする。Homebrewはネット上に多くの情報があるが、一貫した環境を提供するMacPortsを推す（Qiitaの[解説](https://qiita.com/tenomoto/items/66614f982de96641d662)）。MacPortsの既定のインストール先は`/opt/local`である。[Homebrew](https://docs.brew.sh/Installation)は、Intel Macでは`/usr/local`に、インストールされるので、自分でコンパイルしたものと混在することになる。Apple Siliconでは（ついに学んだのか）`/opt/homebrew`にインストールされる。IntelからApple Siliconに乗り換えたときに面倒が起きそうである。
+プログラミング習の範囲ではMacでも、公式サイトのPythonインストーラでよい。コンパイルが必要な外部ライブラリに依存する場合は、[MacPorts](https://www.macports.org/)を使ってインストールすることをお勧めする。
+Homebrewはネット上に多くの情報があるが、一貫した環境を提供するMacPortsを推す（Qiitaの[解説](https://qiita.com/tenomoto/items/66614f982de96641d662)）。
+MacPortsの既定のインストール先は`/opt/local`である。[Homebrew](https://docs.brew.sh/Installation)は、Intel Macでは`/usr/local`に、インストールされるので、自分でコンパイルしたものと混在することになる。Apple Siliconでは（ついに学んだのか）`/opt/homebrew`にインストールされるようになった。
 
 ### MacPortsのインストール
 
@@ -192,21 +198,21 @@ sudo port -v selfupdate
 
 ### Pythonのインストール
 
-複数のバージョンを共存させるために、Pythonのライブラリ名はpy312-numpyのようにPythonのバージョンが付されている。
-`python312`は`/opt/local/Library/Frameworks/Python.framework/Versions/3.12`にインストールされる。
+複数のバージョンを共存させるために、Pythonのライブラリ名はpy313-numpyのようにPythonのバージョンが付されている。
+`python313`は`/opt/local/Library/Frameworks/Python.framework/Versions/3.13`にインストールされる。
 
 ```zsh
-sudo port install python312
+sudo port install python313
 ```
 インストール後に表示されるメッセージにあるが、使用するバージョンを`select`サブコマンドで選択する。
 
 ```zsh
-sudo port select python python312
+sudo port select python python313
 ```
 
 次にNumpyとmatplotlibをインストールする。
 ```zsh
-sudo port install py312-numpy py312-matplotlib
+sudo port install py313-numpy py313-matplotlib
 ```
 `python312`を明示的にインストールしなてくも、Numpyやmatpotlibが依存するものとしてインストールされる。
 
@@ -215,7 +221,7 @@ sudo port install py312-numpy py312-matplotlib
 JupyterもMacPortsで簡単にインストールできる。
 
 ```zsh
-sudo port install py312-jupyter
+sudo port install py313-jupyter
 ```
 
 ### gfortranとRのインストール

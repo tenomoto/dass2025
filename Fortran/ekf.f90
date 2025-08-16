@@ -3,70 +3,125 @@ program ekf
   implicit none
 
   integer, parameter :: &
-    seed = 514, nmax = 501, iobs1 = 10, dobs = 10
-  real(dp), parameter :: dt = 0.01, sr = 0.01_dp, sb = 0.1_dp, sq = 0.1_dp
+    seed = 514, nmax = 500, iobs1 = 10, dobs = 10, un = 51
+  real(dp), parameter :: &
+    dt = 0.001_dp, sr = 0.01_dp, sb = 0.1_dp, sq = 0.1_dp
+  real(dp), dimension(6), parameter :: &
+    at = [4.0_dp, -2.0_dp, -4.0_dp, -6.0_dp, 2.0_dp, 4.0_dp]
 
-  real(dp), dimension(:), parameter :: at = [4, -2, -4, -6, 2, 4]
-  real(dp), dimension(:), parameter :: a = [1, 0, 0, -1, 0, 0]
-  real(dp), parameter, dimension(2, 2) :: rmat = [[sr**2, 0], [0, sr**2]]
-  real(dp), parameter, dimension(2, 2) :: hmat = [[1, 0], [0, 1]]
-  real(dp), parameter, dimension(2, 2) :: qmat = [[sq**2, 0], [0, sq**2]]
+  integer :: ntobs, i, n, t, nf, m
+  real(dp), dimension(6) :: a = at
+  real(dp), dimension(8) :: xa
+  real(dp), dimension(nmax) :: xt, yt
+  real(dp), dimension(2, 2) :: &
+    mmat, ihess, pamat, pfmat, rmat, qmat, hmat, kmat, ikhmat
+  real(dp), dimension(8, 8) :: mmat1 
+  integer, dimension(:), allocatable :: tobs, t_hist
+  real(dp), dimension(:), allocatable :: x, y, x_hist, y_hist, s
+  real(dp), dimension(:, :), allocatable :: yo
 
-  integer :: ntobs, i, n, t, nf
-  integer, dimension(nmax + ntobs) :: t_hist
-  real(dp), dimension(8) :: w1, xa
-  real(dp), dimension(nmax) :: x, y
-  real(dp), dimension(:), allocatable :: tobs
-  real(dp), dimension(2, 2) :: pamat = [[sb**2, 0], [0, sb**2]]
-  real(dp), dimension(2, 2) :: mmat = [[1, 0], [0, 1]], mmat1
-  real(dp), dimension(nmax + ntobs) :: x_hist, y_hist
+  hmat = diag(2)
+  rmat = sr ** 2 * diag(2)
+  qmat = sq ** 2 * diag(2)
+  pamat = sb ** 2 * diag(2)
+  mmat =  diag(2)
 
-!set.seed(seed)
-  w1(1:2) = [1, 1]
-  w1(3:8) = at
-  call predict_state(w1, dt, nmax, x, y)
+  s = set_seed(seed)
+
+  xa(1:2) = [1, 1]
+  xa(3:8) = a
+  call predict_state(xa, dt, nmax, xt, yt)
 
   ntobs = (nmax - iobs1 + 1) / dobs + 1
-  allocate(tobs(ntobs))
-  tobs = [i, i = iobs1, nmax, dobs]
-  yo = wt(, tobs) !+ matrix(rnorm(2 * ntobs, 0, sr), 2, ntobs)
+  allocate(tobs(ntobs), yo(2, ntobs), t_hist(nmax+ntobs+1), &
+    x_hist(nmax+ntobs+1), y_hist(nmax+ntobs+1))
+  tobs(:) = [(i, i = iobs1, nmax, dobs)]
+  yo(1, :) = [(xt(tobs(i)), i = 1, ntobs)] + rnorm(ntobs, 0.0_dp, sr)
+  yo(2, :) = [(yt(tobs(i)), i = 1, ntobs)] + rnorm(ntobs, 0.0_dp, sr)
 
   xa(1:2) = [2, 2]
   xa(3:8) = a(:)
 
   n = 0
+  m = 1
   do t = 1, ntobs
     nf = tobs(t) - n + 1
-    t_hist = c(t_hist, n:tobs(t), tobs(t))
+    t_hist((n + m):(tobs(t) + m)) = [(i, i = n, tobs(t))]
+    allocate(x(nf), y(nf))
     call predict_state(xa, dt, nf, x, y)
-    mmat = diag(2)
     do i = 1, nf - 1
-      call calc_jacobian(c(xf(, i), a), dt, mmat1)
+      call calc_jacobian([x(i), y(i), a(:)], dt, mmat1)
       mmat = matmul(mmat1(1:2, 1:2), mmat)
     end do
     pfmat = matmul(mmat, matmul(pamat, transpose(mmat))) + qmat
-    kmat = matmul(matmul(pfmat, transpose(hmat)), solve(hmat %*% pfmat %*% t(hmat) + rmat))
-    xa(1:2) = w + matmul(kmat, (yo - w))
+    call inv(matmul(hmat, matmul(pfmat, transpose(hmat))) + rmat, ihess)
+    kmat = matmul(pfmat, matmul(transpose(hmat), ihess))
+    xa(1:2) = [x(nf), y(nf)] + matmul(kmat, (yo(1:2, t) - [x(nf), y(nf)]))
     xa(3:8) = a(:)
-    n = nrow(pfmat)
-    ikhmat = diag(n) - matmul(kmat, hmat)
-    pamat = matmul(ikhmat, matmul(pfmat, t(ikhmat))) + matmul(kmat, matmul(rmat, transpose(kmat)))
-    x_hist = c(x_hist, xf(1, ), xa(1))
-    y_hist = c(y_hist, xf(2, ), xa(2))
+    ikhmat = diag(2) - matmul(kmat, hmat)
+    pamat = matmul(ikhmat, matmul(pfmat, transpose(ikhmat))) + &
+            matmul(kmat, matmul(rmat, transpose(kmat)))
+    x_hist((n + m):(tobs(t) + m)) = x(:)
+    y_hist((n + m):(tobs(t) + m)) = y(:)
     n = tobs(t)
+    m = m + 1
+    deallocate(x, y)
   end do
+  t_hist(nmax + ntobs + 1) = nmax
+  x_hist(nmax + ntobs + 1) = xa(1)
+  y_hist(nmax + ntobs + 1) = xa(2)
 
-  deallocate(tobs)
+  open(unit = un, file = "out_ekf.dat", access = "stream", &
+    form = "unformatted", status = "replace", action = "write")
+  write(unit = un) size(xt), size(t_hist), xt, yt, t_hist, x_hist, y_hist
+  close(unit = un)
+
+  deallocate(tobs, yo, t_hist, x_hist, y_hist)
 
 contains
 
+  function diag(n)
+    integer, intent(in) :: n
+    real(dp), dimension(n, n) :: diag
+    
+    integer :: i
+    
+    diag(:, :) = 0.0_dp
+    do i = 1, n
+      diag(i, i) = 1.0_dp
+    end do
+    
+  end function diag
+  
+  subroutine inv(amat, iamat)
+    real(dp), dimension(:, :), intent(in) :: amat
+    real(dp), dimension(:, :), intent(inout) :: iamat
+    
+    character(len=1), parameter :: uplo = "u"
+    integer, parameter :: nb = 64 ! system dependent
+    integer :: n, lda, lwork, info
+    integer, dimension(:), allocatable :: ipiv
+    real(dp), dimension(:), allocatable :: work
+    
+    n = size(amat, 1)
+    lda = n
+    lwork = n * nb
+    iamat(:, :) = amat(:, :)
+    allocate(ipiv(n), work(lwork))
+    call dsytrf(uplo, n, iamat, lda, ipiv, work, lwork, info)
+    call dsytri(uplo, n, iamat, lda, ipiv, work, info)
+    deallocate(ipiv, work)
+
+  end subroutine inv
+  
   subroutine predict_state(w, dt, nmax, x, y)
-    real(kind=dp), dimension(:), intent(in) :: w
-    real(kind=dp), intent(in) :: dt
-    real(kind=dp), dimension(nmax), intent(inout) :: x, y
+    real(dp), dimension(:), intent(in) :: w
+    real(dp), intent(in) :: dt
+    integer, intent(in) :: nmax
+    real(dp), dimension(nmax), intent(inout) :: x, y
 
     integer :: n
-    real(kind=dp), dimension(6) :: a
+    real(dp), dimension(6) :: a
 
     x(1) = w(1)
     y(1) = w(2)
@@ -78,14 +133,15 @@ contains
 
   end subroutine predict_state
 
-  subrotuine calc_jacobian(w, dt)
-    real(kind=dp), dimension(:), intent(in) :: w
-    real(kind=dp), intent(in) :: dt
-    real(kind=dp), dimension(8, 8) :: jmat, mmat
+  subroutine calc_jacobian(w, dt, mmat)
+    real(dp), dimension(:), intent(in) :: w
+    real(dp), intent(in) :: dt
+    real(dp), dimension(:, :), intent(inout) ::  mmat
 
-    integer :: i
-    real(kind=dp)  :: x, y
-    real(kind=dp), dimension(6) :: a
+    integer :: i, n
+    real(dp)  :: x, y
+    real(dp), dimension(6) :: a
+    real(dp), dimension(8, 8) :: jmat
 
     x = w(1)
     y = w(2)
@@ -98,15 +154,54 @@ contains
     jmat(2, 1) = a(6) * y
     jmat(2, 2) = a(4) + 2 * a(5) * y + a(6) * x
     jmat(2, 6:8) = [y, y**2, x * y]
-    do i = 3, 8
-      jmat(i, i) = 1.0_dp
-    end do
-    mmat = dt * jmat
-    do i = 1, 8
-      mmat(i, i) = 1.0_dp + mmat(i, i)
-    end do
+    jmat(3:8, 3:8) = diag(6)
+    mmat = diag(8) + dt * jmat
 
-  end subroutine predict_state
+  end subroutine calc_jacobian
+
+  function set_seed(seed) result(s)
+    integer :: seed
+    integer :: n
+    integer, allocatable :: s(:)
+
+    call random_seed(size=n)
+!    print *, "seed size=", n
+    allocate(s(n))
+    s(:) = seed
+    call random_seed(put=s)
+    call random_seed(get=s)
+!    print *, "seed=", s
+
+  end function set_seed
+
+  function runif(n) result(u)
+    integer, intent(in) :: n
+    real(dp), allocatable :: u(:)
+
+    allocate(u(n))
+    call random_number(u)
+    u = 1.0_dp - u
+
+  end function runif
+
+  function rnorm(n, mean, sd) result(x)
+    integer, intent(in) :: n 
+    real(dp), intent(in), optional :: mean, sd
+    real(dp), allocatable :: x(:)
+
+    real(dp), allocatable :: u1(:), u2(:)
+    real(dp) :: tau
+
+    tau = 2.0_dp * acos(-1.0_dp)
+    allocate(u1(n), u2(n), x(n))
+    u1 = runif(n)
+    u2 = runif(n)
+    x = sqrt(-2.0_dp * log(u1)) * cos(tau * u2)
+    if (present(sd)) x = sd * x
+    if (present(mean)) x = mean + x
+    deallocate(u1, u2)
+
+  end function rnorm
 
 end program ekf
 
