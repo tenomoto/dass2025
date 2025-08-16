@@ -148,6 +148,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#fortran" id="toc-fortran" class="nav-link active" data-scroll-target="#fortran">Fortran</a></li>
   <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
+  <li><a href="#google-colaboratory" id="toc-google-colaboratory" class="nav-link" data-scroll-target="#google-colaboratory">Google Colaboratory</a></li>
   <li><a href="#jupyter" id="toc-jupyter" class="nav-link" data-scroll-target="#jupyter">Jupyter</a></li>
   <li><a href="#ターミナル" id="toc-ターミナル" class="nav-link" data-scroll-target="#ターミナル">ターミナル</a></li>
   <li><a href="#windows" id="toc-windows" class="nav-link" data-scroll-target="#windows">Windows</a>
@@ -192,24 +193,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>演習用プログラムは、Fortran および Python のプログラムを配布する。 実行には以下の環境が必要となる。</p>
 <section id="fortran" class="level2">
 <h2 class="anchored" data-anchor-id="fortran">Fortran</h2>
-<p>ノートパソコンに、Fortranコンパイラ (gfortranなど) を用意する。 配布プログラムはgfortran-14.2.0（Mac）、13.2.0（Windows）でコンパイル、実行ができることを確認した。 Fortran組込手続である<code>matmul</code>などを用いて、線型代数ライブラがなくても進められるようにしているが、行列計算を行うには<a href="https://www.openblas.net/">OpenBLAS</a>などの線型代数ライブラリを用意する。</p>
-<p>Fortranプログラムの実行結果を可視化するために、1次元及び2次元のプロットができるアプリケーションが必要である。演習ではRで書かれたスクリプトを配布する。</p>
+<p>ノートパソコンに、Fortranコンパイラ (gfortranなど) を用意する。 配布プログラムはgfortran-14.2.0でコンパイル、実行ができることを確認した。 行列積にはFortran組込手続である<code>matmul</code>などを用いているので、線型代数ライブラリは不要が、行列計算を行うには線型代数ライブラリを用意する。 <a href="https://www.openblas.net/">OpenBLAS</a>などを導入してもよいが、以下ではRtoolsに含まれるLAPACKを利用する。</p>
+<p>Fortranプログラムの実行結果を可視化するために、プロットができるアプリケーションが必要である。演習ではRで書かれたスクリプトを配布する。</p>
 </section>
 <section id="python" class="level2">
 <h2 class="anchored" data-anchor-id="python">Python</h2>
 <p>Pythonは一般的なプログラミング言語であり、ライブラリを追加する必要がある。 数学函数や行列計算にはNumpyを用いる。 データの描画にはMatplotlibが一般的である。 ノートパソコンに、Python実行環境を準備する。 配布するスクリプトはPython3.12.5で作成した。</p>
 </section>
-<section id="jupyter" class="level2">
-<h2 class="anchored" data-anchor-id="jupyter">Jupyter</h2>
-<p>職場や研究室のリモート環境やクラウドを用いることもできる。 <a href="https://colab.research.google.com/">Google Colaboratory</a>はGoogleアカウントがあれば無料で利用できる。 無償版は使用できる資源に制約がある。 ネットワーク環境の制約を受けることにも注意が必要である。</p>
-<p>Google Colaboratoryは<a href="https://jupyter.org/">Jupyter</a>のように、ウェブブラウザから使う。 Jupyterはノートパソコンに構築することもできる（<a href="#sec-jupyter-win">Windows</a>、<a href="#sec-jupyter-mac">Mac</a>参照）。</p>
-<p>Python3をCPUで使うのが既定であるが、GPUを使ったり、Rを使うこともできる。 次のようにgfortranを使うこともできる。</p>
+<section id="google-colaboratory" class="level2">
+<h2 class="anchored" data-anchor-id="google-colaboratory">Google Colaboratory</h2>
+<p>Google Colaboratoryは、ウェブブラウザから使う。 <a href="https://colab.research.google.com/">Google Colaboratory</a>はGoogleアカウントがあれば無料で利用できる。 無償版は使用できる資源に制約がある。 ネットワーク環境の制約を受けることにも注意が必要である。</p>
+<p>Python3をCPUで使うのが既定であるが、GPUを使ったり、RやJuliaを使うこともできる。 次のようにgfortranを使うこともできる。</p>
 <pre class="jupyter"><code>%%writefile hello.f90
 print *, "Hello, world!"
 end</code></pre>
 <p>シェルエスケープしてコンパイル、実行する。</p>
 <pre class="jupyter"><code>!gfortran -o hello hello.f90</code></pre>
 <pre class="jupyter"><code>./hello</code></pre>
+</section>
+<section id="jupyter" class="level2">
+<h2 class="anchored" data-anchor-id="jupyter">Jupyter</h2>
+<p><a href="https://jupyter.org/">Jupyter</a>もウェブブラウザから用いるが、 ノートパソコンに構築することもできる（<a href="#sec-jupyter-win">Windows</a>、<a href="#sec-jupyter-mac">Mac</a>参照）。</p>
 </section>
 <section id="ターミナル" class="level2">
 <h2 class="anchored" data-anchor-id="ターミナル">ターミナル</h2>
@@ -225,11 +229,11 @@ end</code></pre>
 <section id="pythonのインストール" class="level3">
 <h3 class="anchored" data-anchor-id="pythonのインストール">Pythonのインストール</h3>
 <p>Fortranを用いる場合は、飛ばして良い。</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>winget install Python<span class="op">.</span><span class="fu">Python</span><span class="op">.</span><span class="dv">3.12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>winget install Python<span class="op">.</span><span class="fu">Python</span><span class="op">.</span><span class="dv">3.13</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>新しいタブを開くと、pythonにパスが通っている。 pythonから抜けるには<code>quit()</code>とタイプする。</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>PowerShell <span class="dv">7.4</span><span class="op">.</span><span class="dv">4</span></span>
+<div class="sourceCode" id="cb6"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>PowerShell <span class="dv">7.5</span><span class="op">.</span><span class="dv">2</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">python</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Python <span class="dv">3.12</span><span class="op">.</span><span class="dv">5</span> <span class="op">(</span>tags<span class="op">/</span>v3<span class="op">.</span><span class="dv">12.5</span><span class="op">:</span>ff3bc82<span class="op">,</span> Aug  <span class="dv">6</span> <span class="dv">2024</span><span class="op">,</span> <span class="dv">20</span><span class="op">:</span><span class="dv">45</span><span class="op">:</span><span class="dv">25</span><span class="op">)</span> <span class="op">[</span>MSC v<span class="dv">.1940</span> <span class="dv">64</span> bit <span class="op">(</span>AMD64<span class="op">)]</span> on win32</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>Python <span class="dv">3.12</span><span class="op">.</span><span class="dv">5</span> <span class="op">(</span>tags<span class="op">/</span>v3<span class="op">.</span><span class="dv">13.7</span><span class="op">:</span>bceelc3<span class="op">,</span> Aug <span class="dv">14</span> <span class="dv">2025</span><span class="op">,</span> <span class="dv">14</span><span class="op">:</span><span class="dv">15</span><span class="op">:</span><span class="dv">11</span><span class="op">)</span> <span class="op">[</span>MSC v<span class="dv">.1944</span> <span class="dv">64</span> bit <span class="op">(</span>AMD64<span class="op">)]</span> on win32</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">Type</span> <span class="st">"help"</span><span class="op">,</span> <span class="st">"copyright"</span><span class="op">,</span> <span class="st">"credits"</span> or <span class="st">"license"</span> <span class="cf">for</span> more information<span class="op">.</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> quit<span class="op">()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>pipでNumpyとmatplotlibをインストールする。</p>
@@ -252,20 +256,20 @@ end</code></pre>
 </section>
 <section id="gfortranとrのインストール" class="level3">
 <h3 class="anchored" data-anchor-id="gfortranとrのインストール">gfortranとRのインストール</h3>
-<p>Fortranでの計算結果の可視化にはRスクリプトを配布する。 R以外で描画する場合はRは不要であるが、gfortranを使うにはRの開発環境であるRToolsをインストールする。 RToolsにはMinGW-w64が含まれているが、最も手軽に開発環境を構築できる。 Numpyの<a href="https://numpy.org/doc/stable/building/index.html">ソースからのインストール</a>にも推奨されている。</p>
+<p>Fortranでの計算結果の可視化にはRスクリプトを配布する。 R以外で描画する場合はRは不要であるが、gfortranやLAPCKを使うため、Rの開発環境であるRToolsをインストールする。 RToolsにはMinGW-w64が含まれており、最も手軽に開発環境を構築できる。 （Numpyの<a href="https://numpy.org/doc/stable/building/index.html">ソースからのインストール</a>にも推奨されている。）</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>winget install RProject<span class="op">.</span><span class="fu">R</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>winget install RProject<span class="op">.</span><span class="fu">Rtools</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>パスを設定する。設定ファイルはドキュメント（パソコンのアカウントがMicrosoftアカウントと紐付けられている場合は<code>OneDrive\ドキュメント</code>）の<code>PowerShell</code>フォルダの中の<code>Microsoft.PowerShell_profile.ps1</code>に保存される。<code>PowerShell</code>フォルダがないと保存できないことがあるので、あらかじめ作成しておく。Neovimで編集する場合は次のようにする。</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nvim <span class="va">$profile</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">+=</span> <span class="st">"</span><span class="va">$env</span><span class="op">:</span><span class="va">ProgramFiles</span><span class="st">/R/R-4.4.1/bin/x64;"</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">+=</span> <span class="st">"C:/rtools44/usr/bin;C:/rtools44/x86_w64-mingw32.static.posix/bin;"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">+=</span> <span class="st">"</span><span class="va">$env</span><span class="op">:</span><span class="va">ProgramFiles</span><span class="st">/R/R-4.5.1/bin/x64;"</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="va">$env</span><span class="op">:</span><span class="va">PATH</span> <span class="op">+=</span> <span class="st">"C:/rtools45/usr/bin;C:/rtools45/x86_w64-mingw32.static.posix/bin;"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>R</code>は1行目のパスに、make<code>は2行目の前者に、</code>gfortran<code>は後者にある。</code>R<code>はPowerShellでは、一つ前に投入したコマンドを呼び出すものであり、名前が衝突する。 Rを起動したいときは、</code>R.exe<code>と打鍵する。</code>x86_w64-mingw32.static.posix`はプラットフォームに依存するので、ARM64では異なる。 別タブを開いてgfortranがあることを確認する。</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>gfortran <span class="op">--</span>version</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="mac" class="level2">
 <h2 class="anchored" data-anchor-id="mac">Mac</h2>
-<p>プログラミング習の範囲ではMacでも、公式サイトのPythonインストーラでよい。コンパイルが必要な外部ライブラリに依存する場合は、<a href="https://www.macports.org/">MacPorts</a>を使ってインストールすることをお勧めする。Homebrewはネット上に多くの情報があるが、一貫した環境を提供するMacPortsを推す（Qiitaの<a href="https://qiita.com/tenomoto/items/66614f982de96641d662">解説</a>）。MacPortsの既定のインストール先は<code>/opt/local</code>である。<a href="https://docs.brew.sh/Installation">Homebrew</a>は、Intel Macでは<code>/usr/local</code>に、インストールされるので、自分でコンパイルしたものと混在することになる。Apple Siliconでは（ついに学んだのか）<code>/opt/homebrew</code>にインストールされる。IntelからApple Siliconに乗り換えたときに面倒が起きそうである。</p>
+<p>プログラミング習の範囲ではMacでも、公式サイトのPythonインストーラでよい。コンパイルが必要な外部ライブラリに依存する場合は、<a href="https://www.macports.org/">MacPorts</a>を使ってインストールすることをお勧めする。 Homebrewはネット上に多くの情報があるが、一貫した環境を提供するMacPortsを推す（Qiitaの<a href="https://qiita.com/tenomoto/items/66614f982de96641d662">解説</a>）。 MacPortsの既定のインストール先は<code>/opt/local</code>である。<a href="https://docs.brew.sh/Installation">Homebrew</a>は、Intel Macでは<code>/usr/local</code>に、インストールされるので、自分でコンパイルしたものと混在することになる。Apple Siliconでは（ついに学んだのか）<code>/opt/homebrew</code>にインストールされるようになった。</p>
 <section id="macportsのインストール" class="level3">
 <h3 class="anchored" data-anchor-id="macportsのインストール">MacPortsのインストール</h3>
 <p><a href="https://www.macports.org/install.php">Installing MacPorts</a>に従って、次の手順でインストールする。</p>
@@ -288,18 +292,18 @@ end</code></pre>
 </section>
 <section id="pythonのインストール-1" class="level3">
 <h3 class="anchored" data-anchor-id="pythonのインストール-1">Pythonのインストール</h3>
-<p>複数のバージョンを共存させるために、Pythonのライブラリ名はpy312-numpyのようにPythonのバージョンが付されている。 <code>python312</code>は<code>/opt/local/Library/Frameworks/Python.framework/Versions/3.12</code>にインストールされる。</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port install python312</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>複数のバージョンを共存させるために、Pythonのライブラリ名はpy313-numpyのようにPythonのバージョンが付されている。 <code>python313</code>は<code>/opt/local/Library/Frameworks/Python.framework/Versions/3.13</code>にインストールされる。</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port install python313</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>インストール後に表示されるメッセージにあるが、使用するバージョンを<code>select</code>サブコマンドで選択する。</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port select python python312</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port select python python313</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>次にNumpyとmatplotlibをインストールする。</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port install py312-numpy py312-matplotlib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port install py313-numpy py313-matplotlib</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>python312</code>を明示的にインストールしなてくも、Numpyやmatpotlibが依存するものとしてインストールされる。</p>
 </section>
 <section id="sec-jupyter-mac" class="level3">
 <h3 class="anchored" data-anchor-id="sec-jupyter-mac">Jupyterのインストール</h3>
 <p>JupyterもMacPortsで簡単にインストールできる。</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port install py312-jupyter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode zsh code-with-copy"><code class="sourceCode zsh"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> port install py313-jupyter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="gfortranとrのインストール-1" class="level3">
 <h3 class="anchored" data-anchor-id="gfortranとrのインストール-1">gfortranとRのインストール</h3>
