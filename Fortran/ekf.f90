@@ -3,7 +3,7 @@ program ekf
   implicit none
 
   integer, parameter :: &
-    seed = 514, nmax = 500, iobs1 = 10, dobs = 10, un = 51
+    seed = 514, nmax = 501, iobs1 = 10, dobs = 10, un = 51
   real(dp), parameter :: &
     dt = 0.001_dp, sr = 0.01_dp, sb = 0.1_dp, sq = 0.1_dp
   real(dp), dimension(6), parameter :: &
@@ -32,7 +32,7 @@ program ekf
   xa(3:8) = a
   call predict_state(xa, dt, nmax, xt, yt)
 
-  ntobs = (nmax - iobs1 + 1) / dobs + 1
+  ntobs = (nmax - iobs1) / dobs + 1
   allocate(tobs(ntobs), yo(2, ntobs), t_hist(nmax+ntobs+1), &
     x_hist(nmax+ntobs+1), y_hist(nmax+ntobs+1))
   tobs(:) = [(i, i = iobs1, nmax, dobs)]

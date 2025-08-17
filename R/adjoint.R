@@ -32,37 +32,9 @@ adjoint <- function(dt, a, x, y, xo, yo, tobs) {
       ax[n] <- ax[n] + (x[n] - xo[n])
       ay[n] <- ay[n] + (y[n] - yo[n])
     }
-    #   cat(n, ":", aa, ax[n], ay[n], "\n")
   }
-  #  cat("Final adjoint state:", aa, "\n")
   c(aa, ax[1], ay[1])
 }
-
-nmax <- 501
-dt <- 0.001
-at <- c(4, -2, -4, -6, 2, 4)
-x1 <- 1
-y1 <- 1
-tobs <- seq(2, nmax, by = 2)
-forward.result <- forward(dt, at, x1, y1, nmax)
-xt <- forward.result$x
-yt <- forward.result$y
-
-xo <- xt
-yo <- yt
-
-calc.cost <- function(xf, yf, xo, yo) {
-  0.5 * (sum((xf- xo)^2 + (yf - yo)^2)) 
-}
-
-a <- c(1, 0, 0, -1, 0, 0)
-x1 <- 2
-y1 <- 2
-par <- c(a, x1, y1)
-tobs <- seq(2, nmax, by = 2)
-cntl <- list(maxit = 100, reltol = 1e-5)
-
-hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 
 fn <- function(par, dt, nmax, xo, yo, tobs) {
   xyf <- forward(dt, par[1:6], par[7], par[8], nmax)
@@ -80,12 +52,32 @@ gr <- function(par, dt, nmax, xo, yo, tobs){
   grad
 }
 
+calc.cost <- function(xf, yf, xo, yo) {
+  0.5 * (sum((xf - xo)^2 + (yf - yo)^2)) 
+}
+
+nmax <- 501
+dt <- 0.001
+at <- c(4, -2, -4, -6, 2, 4)
+x1 <- 1
+y1 <- 1
+
+tobs <- seq(2, nmax, by = 2)
+forward.result <- forward(dt, at, x1, y1, nmax)
+xt <- forward.result$x
+yt <- forward.result$y
+xo <- xt
+yo <- yt
+
+a <- c(1, 0, 0, -1, 0, 0)
+x1 <- 2
+y1 <- 2
+par <- c(a, x1, y1)
+cntl <- list(maxit = 100, reltol = 1e-5)
+
+hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
+
 alg <- "BFGS"
 res <- optim(par, fn, gr, method = alg, control = cntl, dt, nmax, xo, yo, tobs)
-#library("nloptr")
 
-#alg <- "TNEWTON_PRECOND_RESTART"
-#opts <- list("algorithm" = paste0("NLOPT_LD_", alg), "xtol_rel" = 1.0e-5)
-#res <- nloptr(par, fn, eval_grad_f = gr, opts = opts,
-#              dt = dt, nmax = nmax, xo = xo, yo = yo, tobs = tobs)
-save(res, file = "res.RData")
+save(alg, hist, file = "out_adjoint.RData")
