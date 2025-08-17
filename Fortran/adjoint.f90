@@ -1,3 +1,4 @@
+! gfortran adjoint.f90 -o adjoint
 program adjoint_main
   use, intrinsic :: iso_fortran_env, only: dp => real64
   implicit none

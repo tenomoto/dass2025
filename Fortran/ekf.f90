@@ -1,3 +1,5 @@
+!gfortran ekf.f90 -o ekf -framework Accelerate # mac
+!gfortran ekf.f90 -o ekf -LC:\rtools45\x86_64-w64-mingw32.static.posix\lib -llapack -lblas
 program ekf
   use, intrinsic :: iso_fortran_env, only: dp => real64
   implicit none
