@@ -7,7 +7,7 @@ program ekf
   integer, parameter :: &
     seed = 514, nmax = 501, iobs1 = 10, dobs = 10, un = 51
   real(dp), parameter :: &
-    dt = 0.001_dp, sr = 0.05_dp, sb = 0.1_dp, sq = 0.1_dp
+    dt = 0.001_dp, sr = 0.05_dp, sb = 0.1_dp, sq = 0.03_dp
   real(dp), dimension(6), parameter :: &
     at = [4.0_dp, -2.0_dp, -4.0_dp, -6.0_dp, 2.0_dp, 4.0_dp]
 
@@ -25,7 +25,7 @@ program ekf
 
   hmat = diag(2)
   rmat = sr ** 2 * diag(2)
-  qmat = sq ** 2 * diag(2) / dble(dobs)
+  qmat = sq ** 2 * diag(2)
   pamat = sb ** 2 * diag(2)
 
   s = set_seed(seed)
@@ -71,7 +71,8 @@ program ekf
     n = tobs(t)
     m = m + 1
     deallocate(x, y)
-    print '(a,i3,2(a,es9.3))', 'Assimilation ',t,': error x = ',abs(xa(1) - xt(tobs(t))),', error y = ',abs(xa(2) - yt(tobs(t)))
+    print '(a,i3,2(a,es9.3))', 'Assimilation ',tobs(t), &
+    & ': error x = ',abs(xa(1) - xt(tobs(t))),', error y = ',abs(xa(2) - yt(tobs(t)))
   end do
   t_hist(nmax + ntobs) = nmax
   x_hist(nmax + ntobs) = xa(1)

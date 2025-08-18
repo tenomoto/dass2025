@@ -36,7 +36,7 @@ if __name__ == "__main__":
     w1 = [1, 1] + at
     wt = predict_state(w1, dt, nmax)
 
-    sr = 1e-2
+    sr = 5e-2
     iobs1 = 10
     dobs = 10
     tobs = np.arange(iobs1 - 1, nmax, dobs)
@@ -44,29 +44,33 @@ if __name__ == "__main__":
     yo = wt[:, tobs] + rng.normal(0, sr, 2 * ntobs).reshape(2, ntobs)
     rmat = np.diag(np.repeat(sr**2, 2))
 
-    a = [1, 0, 0, -1, 0, 0]
+    #a = [1, 0, 0, -1, 0, 0] # inexact parameters
+    a = at
     xa = np.array([2, 2] + a)
 
     hmat = np.identity(2)
     sb = 0.1
-    sq = 0.1
+    sq = 0.03
     pamat = np.diag(np.repeat(sb**2, 2))
     qmat = np.diag(np.repeat(sq**2, 2))
 
     x_hist = []
     y_hist = []
     t_hist = [] 
+    p_hist = []
 
     n = 0
     for t in range(ntobs):
       nf = tobs[t] - n + 1
       t_hist += list(range(n, tobs[t] + 1))
       xf = predict_state(xa, dt, nf)
-      mmat = np.identity(2)
-
+      
+      p_hist.append([pamat[0,0],pamat[1,1],pamat[0,1],pamat[1,0]])
+      pfmat = pamat
       for i in range(nf - 1):
-          mmat = calc_jacobian(np.concatenate([xf[:, i], a]), dt)[0:2, 0:2] @ mmat
-      pfmat = mmat @ pamat @ mmat.transpose() + qmat
+        mmat = calc_jacobian(np.concatenate([xf[:, i], a]), dt)[0:2, 0:2]
+        pfmat = mmat @ pfmat @ mmat.transpose() + qmat
+        p_hist.append([pfmat[0,0],pfmat[1,1],pfmat[0,1],pfmat[1,0]])
       kmat = pfmat @ hmat.transpose() @ np.linalg.inv(hmat @ pfmat @ hmat.transpose() + rmat)
       xa = xf[0:2, nf-1] + kmat @ (yo[:, t] - xf[0:2, nf-1])
       xa = np.concatenate([xa, a])
@@ -74,10 +78,13 @@ if __name__ == "__main__":
       pamat = ikhmat @ pfmat @ ikhmat.transpose() + kmat @ rmat @ kmat.transpose()
       x_hist = x_hist + xf[0, ].tolist()
       y_hist = y_hist + xf[1, ].tolist()
+      print("Assimilation {:d}: error x = {:.3e}, error y = {:.3e}"\
+        .format(tobs[t],abs(xf[0,nf-1]-wt[0,tobs[t]]),abs(xf[1,nf-1]-wt[1,tobs[t]])))
       n = tobs[t]
     t_hist = t_hist + [n]
     x_hist = x_hist + [xa[0]]
     y_hist = y_hist + [xa[1]]
+    p_hist.append([pamat[0,0],pamat[1,1],pamat[0,1],pamat[1,0]])
     print(tobs[-1])
 
     fig, ax = plt.subplots()
@@ -91,4 +98,17 @@ if __name__ == "__main__":
     ax.set_ylabel("x,y")
     ax.set_ylim([0, 2])
     ax.legend(loc = "upper right")
+    plt.show()
+
+    p_hist = np.array(p_hist)
+    fig, ax = plt.subplots()
+    ax.plot(t_hist, p_hist[:,0], color = "blue", label = "Pxx")
+    ax.plot(t_hist, p_hist[:,1], color = "red", label = "Pyy")
+    ax.plot(t_hist, p_hist[:,2], color = "blue", linestyle = "dashed", label = "Pxy=Pyx")
+    #ax.plot(t_hist, p_hist[:,3], color = "red", linestyle = "dashed", label = "Pyx")
+    ax.hlines([sr*sr], 0, 1, colors = "black", linestyle = "dotted", transform = ax.get_yaxis_transform(), label = "R")
+    ax.set_xlabel("t")
+    ax.set_ylabel("P")
+    ax.set_ylim([-0.02, 0.02])
+    ax.legend(loc = "lower left")
     plt.show()
