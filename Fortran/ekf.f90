@@ -7,7 +7,7 @@ program ekf
   integer, parameter :: &
     seed = 514, nmax = 501, iobs1 = 10, dobs = 10, un = 51
   real(dp), parameter :: &
-    dt = 0.001_dp, sr = 0.01_dp, sb = 0.1_dp, sq = 0.1_dp
+    dt = 0.001_dp, sr = 0.05_dp, sb = 0.1_dp, sq = 0.1_dp
   real(dp), dimension(6), parameter :: &
     at = [4.0_dp, -2.0_dp, -4.0_dp, -6.0_dp, 2.0_dp, 4.0_dp]
 
@@ -16,17 +16,17 @@ program ekf
   real(dp), dimension(8) :: xa
   real(dp), dimension(nmax) :: xt, yt
   real(dp), dimension(2, 2) :: &
-    mmat, ihess, pamat, pfmat, rmat, qmat, hmat, kmat, ikhmat
-  real(dp), dimension(8, 8) :: mmat1 
+    ihess, pamat, pfmat, rmat, qmat, hmat, kmat, ikhmat
+  real(dp), dimension(8, 8) :: mmat
   integer, dimension(:), allocatable :: tobs, t_hist
   real(dp), dimension(:), allocatable :: x, y, x_hist, y_hist, s
+  real(dp), dimension(:, :), allocatable :: p_hist
   real(dp), dimension(:, :), allocatable :: yo
 
   hmat = diag(2)
   rmat = sr ** 2 * diag(2)
-  qmat = sq ** 2 * diag(2)
+  qmat = sq ** 2 * diag(2) / dble(dobs)
   pamat = sb ** 2 * diag(2)
-  mmat =  diag(2)
 
   s = set_seed(seed)
 
@@ -35,8 +35,9 @@ program ekf
   call predict_state(xa, dt, nmax, xt, yt)
 
   ntobs = (nmax - iobs1) / dobs + 1
-  allocate(tobs(ntobs), yo(2, ntobs), t_hist(nmax+ntobs+1), &
-    x_hist(nmax+ntobs+1), y_hist(nmax+ntobs+1))
+  allocate(tobs(ntobs), yo(2, ntobs), t_hist(nmax+ntobs), &
+    x_hist(nmax+ntobs), y_hist(nmax+ntobs))
+  allocate(p_hist(nmax+ntobs,4))
   tobs(:) = [(i, i = iobs1, nmax, dobs)]
   yo(1, :) = [(xt(tobs(i)), i = 1, ntobs)] + rnorm(ntobs, 0.0_dp, sr)
   yo(2, :) = [(yt(tobs(i)), i = 1, ntobs)] + rnorm(ntobs, 0.0_dp, sr)
@@ -50,12 +51,14 @@ program ekf
     nf = tobs(t) - n + 1
     t_hist((n + m):(tobs(t) + m)) = [(i, i = n, tobs(t))]
     allocate(x(nf), y(nf))
+    p_hist(n+m,:) = [pamat(1,1),pamat(2,2),pamat(1,2),pamat(2,1)]
     call predict_state(xa, dt, nf, x, y)
+    pfmat = pamat
     do i = 1, nf - 1
-      call calc_jacobian([x(i), y(i), a(:)], dt, mmat1)
-      mmat = matmul(mmat1(1:2, 1:2), mmat)
+      call calc_jacobian([x(i), y(i), a(:)], dt, mmat)
+      pfmat = matmul(mmat(1:2, 1:2), matmul(pfmat, transpose(mmat(1:2, 1:2)))) + qmat
+      p_hist(n+m+i,:) = [pfmat(1,1),pfmat(2,2),pfmat(1,2),pfmat(2,1)]
     end do
-    pfmat = matmul(mmat, matmul(pamat, transpose(mmat))) + qmat
     call inv(matmul(hmat, matmul(pfmat, transpose(hmat))) + rmat, ihess)
     kmat = matmul(pfmat, matmul(transpose(hmat), ihess))
     xa(1:2) = [x(nf), y(nf)] + matmul(kmat, (yo(1:2, t) - [x(nf), y(nf)]))
@@ -68,17 +71,20 @@ program ekf
     n = tobs(t)
     m = m + 1
     deallocate(x, y)
+    print '(a,i3,2(a,es9.3))', 'Assimilation ',t,': error x = ',abs(xa(1) - xt(tobs(t))),', error y = ',abs(xa(2) - yt(tobs(t)))
   end do
-  t_hist(nmax + ntobs + 1) = nmax
-  x_hist(nmax + ntobs + 1) = xa(1)
-  y_hist(nmax + ntobs + 1) = xa(2)
+  t_hist(nmax + ntobs) = nmax
+  x_hist(nmax + ntobs) = xa(1)
+  y_hist(nmax + ntobs) = xa(2)
+  p_hist(nmax + ntobs,:) = [pamat(1,1),pamat(2,2),pamat(1,2),pamat(2,1)]
 
   open(unit = un, file = "out_ekf.dat", access = "stream", &
     form = "unformatted", status = "replace", action = "write")
-  write(unit = un) size(xt), size(t_hist), xt, yt, t_hist, x_hist, y_hist
+  write(unit = un) size(xt), size(t_hist), xt, yt, t_hist, x_hist, y_hist &
+  &, p_hist(:,1), p_hist(:,2), p_hist(:,3), p_hist(:,4)
   close(unit = un)
 
-  deallocate(tobs, yo, t_hist, x_hist, y_hist)
+  deallocate(tobs, yo, t_hist, x_hist, y_hist, p_hist)
 
 contains
 
