@@ -14,6 +14,7 @@ close(con)
 
 
 png("state.png", 900, 450)
+par(mar = c(2, 5, 2, 2))
 plot(t_hist, x_hist, type = "l", lwd = 2, xlab = "t", ylab = "x, y",
      ylim = c(0, 2), main = "EKF", cex.main = 2, cex.lab = 2, cex.axis =2)
 lines(t_hist, y_hist, lwd = 2, col = "red")
@@ -25,6 +26,7 @@ legend("topright", c("x", "y", "xt", "yt"), cex = 2,
 dev.off()
 
 png("errcov.png", 900, 450)
+par(mar = c(2, 5, 2, 2))
 plot(t_hist, p11_hist, type = "l", lwd = 2, col = "blue", xlab = "t", ylab = "P",
      ylim = c(-0.02, 0.02), main = "EKF error covariance", cex.main = 2, cex.lab = 2, cex.axis =2)
 lines(t_hist, p22_hist, lwd = 2, col = "red")
