@@ -16,6 +16,10 @@ adjoint <- function(dt, a, x, y, xo, yo, tobs) {
   ax <- rep(0, nmax)
   ay <- rep(0, nmax)
   for (n in (nmax-1):1) {
+    if (n %in% tobs) {
+      ax[n] <- ax[n] + (x[n] - xo[n])
+      ay[n] <- ay[n] + (y[n] - yo[n])
+    }
     aa[6] <- aa[6] + dt * x[n] * y[n] * ay[n+1]
     aa[5] <- aa[5] + dt * y[n] * y[n] * ay[n+1]
     aa[4] <- aa[4] + dt * y[n] * ay[n+1]
@@ -28,10 +32,7 @@ adjoint <- function(dt, a, x, y, xo, yo, tobs) {
     ay[n] <- ay[n] + dt * a[3] * x[n] * ax[n+1]
     ax[n] <- ax[n] + dt * a[2] * x[n] * ax[n+1]
     ax[n] <- ax[n] + (1 + dt * (a[1] + a[2] * x[n] + a[3] * y[n])) * ax[n+1]
-    if (n %in% tobs) {
-      ax[n] <- ax[n] + (x[n] - xo[n])
-      ay[n] <- ay[n] + (y[n] - yo[n])
-    }
+
   }
   c(aa, ax[1], ay[1])
 }

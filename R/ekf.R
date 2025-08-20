@@ -15,7 +15,7 @@ calc_jacobian <- function(w, dt) {
   x <- w[1]
   y <- w[2]
   a <- w[3:8]
-  mmat <- diag(8)
+  mmat <- matrix(0, 8, 8)
   mmat[1, 1] <- a[1] + 2 * a[2] * x + a[3] * y
   mmat[1, 2] <- a[3] * x
   mmat[1, 3:5] <- c(x, x^2, x * y)
@@ -65,7 +65,7 @@ for (t in 1:ntobs) {
   pfmat <- pamat
   for (i in 1:(nf - 1)) {
     mmat <- calc_jacobian(c(xf[, i], a), dt)[1:2, 1:2]
-    pfmat <- mmat[1:2, 1:2] %*% pfmat %*% t(mmat) + qmat
+    pfmat <- mmat %*% pfmat %*% t(mmat) + qmat
     p_hist <- rbind(p_hist, c(pfmat[1, 1], pfmat[2, 2], pfmat[1, 2]))
   }
   kmat <- pfmat %*% t(hmat) %*% solve(hmat %*% pfmat %*% t(hmat) + rmat)

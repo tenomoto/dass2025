@@ -17,7 +17,7 @@ def calc_jacobian(w, dt):
   x = w[0]
   y = w[1]
   a = w[2:8]
-  mmat = np.identity(8)
+  mmat = np.zeros([8, 8])
   mmat[0, 0] = a[0] + 2 * a[1] * x + a[2] * y
   mmat[0, 1] = a[2] * x
   mmat[0, 2:5] = np.array([x, x**2, x * y])
@@ -30,13 +30,13 @@ if __name__ == "__main__":
     seed = 514
     rng = np.random.default_rng(seed)
 
-    nmax = 501
+    nmax = 500
     dt = 0.001
     at = [4, -2, -4, -6, 2, 4]
     w1 = [1, 1] + at
     wt = predict_state(w1, dt, nmax)
 
-    sr = 1e-2
+    sr = 5e-2
     iobs1 = 10
     dobs = 10
     tobs = np.arange(iobs1 - 1, nmax, dobs)
@@ -49,24 +49,26 @@ if __name__ == "__main__":
 
     hmat = np.identity(2)
     sb = 0.1
-    sq = 0.1
+    sq = 0.03
     pamat = np.diag(np.repeat(sb**2, 2))
     qmat = np.diag(np.repeat(sq**2, 2))
 
     x_hist = []
     y_hist = []
-    t_hist = [] 
+    t_hist = []
+    p_hist = []
 
     n = 0
     for t in range(ntobs):
       nf = tobs[t] - n + 1
       t_hist += list(range(n, tobs[t] + 1))
+      p_hist += [pamat[0, 0], pamat[1, 1], pamat[0, 1]]
       xf = predict_state(xa, dt, nf)
-      mmat = np.identity(2)
-
+      pfmat = pamat
       for i in range(nf - 1):
-          mmat = calc_jacobian(np.concatenate([xf[:, i], a]), dt)[0:2, 0:2] @ mmat
-      pfmat = mmat @ pamat @ mmat.transpose() + qmat
+          mmat = calc_jacobian(np.concatenate([xf[:, i], a]), dt)[0:2, 0:2]
+          pfmat =  mmat @ pfmat @ mmat.transpose() + qmat
+          p_hist += [pfmat[0, 0], pfmat[1, 1], pfmat[0, 1]]
       kmat = pfmat @ hmat.transpose() @ np.linalg.inv(hmat @ pfmat @ hmat.transpose() + rmat)
       xa = xf[0:2, nf-1] + kmat @ (yo[:, t] - xf[0:2, nf-1])
       xa = np.concatenate([xa, a])
@@ -78,9 +80,12 @@ if __name__ == "__main__":
     t_hist = t_hist + [n]
     x_hist = x_hist + [xa[0]]
     y_hist = y_hist + [xa[1]]
-    print(tobs[-1])
+    p_hist += [pfmat[0, 0], pfmat[1, 1], pfmat[0, 1]]
+    p_hist = np.array(p_hist).reshape([len(p_hist) // 3, 3])
 
-    fig, ax = plt.subplots()
+    dpi = 144
+    fig_size = (9, 4.5)
+    fig, ax = plt.subplots(figsize = fig_size)
     ax.plot(t_hist, x_hist, color = "black", label = "x")
     ax.plot(t_hist, y_hist, color = "red", label = "y")
     ax.plot(range(nmax), wt[0, :], color = "black", 
@@ -90,5 +95,20 @@ if __name__ == "__main__":
     ax.set_xlabel("t")
     ax.set_ylabel("x,y")
     ax.set_ylim([0, 2])
+    ax.set_title("EKF state")
     ax.legend(loc = "upper right")
-    plt.show()
+    fig.savefig("state.png", dpi=dpi)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize = fig_size)
+    ax.plot(t_hist, p_hist[:, 0], color = "blue", label = "Pxx")
+    ax.plot(t_hist, p_hist[:, 1], color = "red", label = "Pyy")
+    ax.plot(t_hist, p_hist[:, 2], color = "purple", label = "Pxy=Pyx")
+    ax.axhline(sr**2, linestyle = ":", color = "gray")
+    ax.set_xlabel("t")
+    ax.set_ylabel("P")
+    ax.set_ylim([-0.02, 0.02])
+    ax.set_title("EKF error covariance")
+    ax.legend(loc = "upper right")
+    fig.savefig("errcov.png", dpi=dpi)
+    plt.close(fig)
