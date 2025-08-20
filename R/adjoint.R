@@ -1,3 +1,5 @@
+#library("optimx")
+
 forward <- function(dt, a, x1, y1, nmax) {
   x <- rep(0, nmax)
   y <- rep(0, nmax)
@@ -80,5 +82,9 @@ hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 
 alg <- "BFGS"
 res <- optim(par, fn, gr, method = alg, control = cntl, dt, nmax, xo, yo, tobs)
+
+#alg <- "nvm"
+#res <- optimr(par, fn, gr, method = alg,
+#              dt = dt, nmax = nmax, xo = xo, yo = yo, tobs = tobs)
 
 save(alg, hist, file = "out_adjoint.RData")
