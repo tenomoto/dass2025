@@ -9,14 +9,14 @@ con <- file("out_ekf.dat", "rb")
   p11_hist <- readBin(con, "double", nhist)
   p22_hist <- readBin(con, "double", nhist)
   p12_hist <- readBin(con, "double", nhist)
-  p21_hist <- readBin(con, "double", nhist)
+  sr <- readBin(con, "double", 1)
 close(con)
-
 
 png("state.png", 900, 450)
 par(mar = c(2, 5, 2, 2))
 plot(t_hist, x_hist, type = "l", lwd = 2, xlab = "t", ylab = "x, y",
-     ylim = c(0, 2), main = "EKF", cex.main = 2, cex.lab = 2, cex.axis =2)
+     ylim = c(0, 2), main = "EKF state",
+     cex.main = 2, cex.lab = 2, cex.axis =2)
 lines(t_hist, y_hist, lwd = 2, col = "red")
 lines(1:nmax, xt, lwd = 5, lty = 3)
 lines(1:nmax, yt, lwd = 5, lty = 3, col = "red")
@@ -28,12 +28,12 @@ dev.off()
 png("errcov.png", 900, 450)
 par(mar = c(2, 5, 2, 2))
 plot(t_hist, p11_hist, type = "l", lwd = 2, col = "blue", xlab = "t", ylab = "P",
-     ylim = c(-0.02, 0.02), main = "EKF error covariance", cex.main = 2, cex.lab = 2, cex.axis =2)
+     ylim = c(-0.02, 0.02), main = "EKF error covariance",
+     cex.main = 2, cex.lab = 2, cex.axis =2)
 lines(t_hist, p22_hist, lwd = 2, col = "red")
-lines(t_hist, p12_hist, lwd = 5, lty = 3, col = "blue")
-#lines(t_hist, p21_hist, lwd = 5, lty = 3, col = "red")
-lines(c(1,nmax), c(0.05*0.05,0.05*0.05), lwd=1, lty=5)
+lines(t_hist, p12_hist, lwd = 2, col = "purple")
+abline(h = sr^2, lwd = 1, lty = 3)
 legend("bottomleft", c("Pxx", "Pyy", "Pxy=Pyx", "R"), cex = 2,
-       lwd = c(2, 2, 5, 1), lty = c(1, 1, 3, 5),
-       col = c("blue", "red", "blue", "black"))
+       lwd = 2, lty = c(1, 1, 1, 3),
+       col = c("blue", "red", "purple", "gray"))
 dev.off()

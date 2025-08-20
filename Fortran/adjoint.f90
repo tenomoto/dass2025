@@ -89,6 +89,10 @@ contains
     ax(:) = 0.0_dp
     ay(:) = 0.0_dp
     do n = nmax-1, 1, -1
+      if (any(n == tobs)) then 
+        ax(n) = ax(n) + (x(n) - xo(n))
+        ay(n) = ay(n) + (y(n) - yo(n))
+      end if
       aa(6) = aa(6) + dt * x(n) * y(n) * ay(n+1)
       aa(5) = aa(5) + dt * y(n) * y(n) * ay(n+1)
       aa(4) = aa(4) + dt * y(n) * ay(n+1)
@@ -101,10 +105,6 @@ contains
       ay(n) = ay(n) + dt * a(3) * x(n) * ax(n+1)
       ax(n) = ax(n) + dt * a(2) * x(n) * ax(n+1)
       ax(n) = ax(n) + (1 + dt * (a(1) + a(2) * x(n) + a(3) * y(n))) * ax(n+1)
-      if (any(n == tobs)) then 
-        ax(n) = ax(n) + (x(n) - xo(n))
-        ay(n) = ay(n) + (y(n) - yo(n))
-      end if
     end do
 
   end subroutine adjoint

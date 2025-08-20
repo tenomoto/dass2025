@@ -1,3 +1,5 @@
+#library("optimx")
+
 forward <- function(dt, a, x1, y1, nmax) {
   x <- rep(0, nmax)
   y <- rep(0, nmax)
@@ -16,6 +18,10 @@ adjoint <- function(dt, a, x, y, xo, yo, tobs) {
   ax <- rep(0, nmax)
   ay <- rep(0, nmax)
   for (n in (nmax-1):1) {
+    if (n %in% tobs) {
+      ax[n] <- ax[n] + (x[n] - xo[n])
+      ay[n] <- ay[n] + (y[n] - yo[n])
+    }
     aa[6] <- aa[6] + dt * x[n] * y[n] * ay[n+1]
     aa[5] <- aa[5] + dt * y[n] * y[n] * ay[n+1]
     aa[4] <- aa[4] + dt * y[n] * ay[n+1]
@@ -28,10 +34,7 @@ adjoint <- function(dt, a, x, y, xo, yo, tobs) {
     ay[n] <- ay[n] + dt * a[3] * x[n] * ax[n+1]
     ax[n] <- ax[n] + dt * a[2] * x[n] * ax[n+1]
     ax[n] <- ax[n] + (1 + dt * (a[1] + a[2] * x[n] + a[3] * y[n])) * ax[n+1]
-    if (n %in% tobs) {
-      ax[n] <- ax[n] + (x[n] - xo[n])
-      ay[n] <- ay[n] + (y[n] - yo[n])
-    }
+
   }
   c(aa, ax[1], ay[1])
 }
@@ -79,5 +82,9 @@ hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 
 alg <- "BFGS"
 res <- optim(par, fn, gr, method = alg, control = cntl, dt, nmax, xo, yo, tobs)
+
+#alg <- "nvm"
+#res <- optimr(par, fn, gr, method = alg,
+#              dt = dt, nmax = nmax, xo = xo, yo = yo, tobs = tobs)
 
 save(alg, hist, file = "out_adjoint.RData")

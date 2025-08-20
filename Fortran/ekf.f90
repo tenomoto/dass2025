@@ -37,7 +37,7 @@ program ekf
   ntobs = (nmax - iobs1) / dobs + 1
   allocate(tobs(ntobs), yo(2, ntobs), t_hist(nmax+ntobs), &
     x_hist(nmax+ntobs), y_hist(nmax+ntobs))
-  allocate(p_hist(nmax+ntobs,4))
+  allocate(p_hist(nmax+ntobs, 3))
   tobs(:) = [(i, i = iobs1, nmax, dobs)]
   yo(1, :) = [(xt(tobs(i)), i = 1, ntobs)] + rnorm(ntobs, 0.0_dp, sr)
   yo(2, :) = [(yt(tobs(i)), i = 1, ntobs)] + rnorm(ntobs, 0.0_dp, sr)
@@ -51,13 +51,13 @@ program ekf
     nf = tobs(t) - n + 1
     t_hist((n + m):(tobs(t) + m)) = [(i, i = n, tobs(t))]
     allocate(x(nf), y(nf))
-    p_hist(n+m,:) = [pamat(1,1),pamat(2,2),pamat(1,2),pamat(2,1)]
+    p_hist(n+m,:) = [pamat(1,1), pamat(2,2), pamat(1,2)]
     call predict_state(xa, dt, nf, x, y)
     pfmat = pamat
     do i = 1, nf - 1
       call calc_jacobian([x(i), y(i), a(:)], dt, mmat)
       pfmat = matmul(mmat(1:2, 1:2), matmul(pfmat, transpose(mmat(1:2, 1:2)))) + qmat
-      p_hist(n+m+i,:) = [pfmat(1,1),pfmat(2,2),pfmat(1,2),pfmat(2,1)]
+      p_hist(n+m+i,:) = [pfmat(1,1), pfmat(2,2), pfmat(1,2)]
     end do
     call inv(matmul(hmat, matmul(pfmat, transpose(hmat))) + rmat, ihess)
     kmat = matmul(pfmat, matmul(transpose(hmat), ihess))
@@ -77,12 +77,13 @@ program ekf
   t_hist(nmax + ntobs) = nmax
   x_hist(nmax + ntobs) = xa(1)
   y_hist(nmax + ntobs) = xa(2)
-  p_hist(nmax + ntobs,:) = [pamat(1,1),pamat(2,2),pamat(1,2),pamat(2,1)]
+  p_hist(nmax + ntobs,:) = [pamat(1,1), pamat(2,2), pamat(1,2)]
 
+  print *, sr**2
   open(unit = un, file = "out_ekf.dat", access = "stream", &
     form = "unformatted", status = "replace", action = "write")
   write(unit = un) size(xt), size(t_hist), xt, yt, t_hist, x_hist, y_hist &
-  &, p_hist(:,1), p_hist(:,2), p_hist(:,3), p_hist(:,4)
+  &, p_hist(:,1), p_hist(:,2), p_hist(:,3), sr
   close(unit = un)
 
   deallocate(tobs, yo, t_hist, x_hist, y_hist, p_hist)

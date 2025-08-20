@@ -73,7 +73,7 @@ winget install Microsoft.PowerShell
 ```
 
 プロファイルが自動で作成されるので、これがWindowsターミナルを起動した時に選択されるように設定する。ウインドウのタイトルバーの下向き記号から設定を選択するか、Ctrl+,で設定画面を表示する。「スタートアップ」の「既定のプロファイル」から、青ではなく黒のPowerShellを選び、ウィンドウ右下の「保存」ボタンをクリックする。
-![](powershell_default_profile.png)
+![](images/powershell_default_profile.png)
 
 ### Pythonのインストール
 

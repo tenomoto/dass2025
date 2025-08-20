@@ -18,6 +18,9 @@ def adjoint(dt, a, x, y, xo, yo, tobs) :
     ax = np.zeros(nmax)
     ay = np.zeros(nmax)
     for n in reversed(range(nmax - 1)):
+        if n in tobs:
+            ax[n] = ax[n] + (x[n] - xo[n])
+            ay[n] = ay[n] + (y[n] - yo[n])
         aa[5] = aa[5] + dt * x[n] * y[n] * ay[n+1]
         aa[4] = aa[4] + dt * y[n] * y[n] * ay[n+1]
         aa[3] = aa[3] + dt * y[n] * ay[n+1]
@@ -30,9 +33,6 @@ def adjoint(dt, a, x, y, xo, yo, tobs) :
         ay[n] = ay[n] + dt * a[2] * x[n] * ax[n+1]
         ax[n] = ax[n] + dt * a[1] * x[n] * ax[n+1]
         ax[n] = ax[n] + (1 + dt * (a[0] + a[1] * x[n] + a[2] * y[n])) * ax[n+1]
-        if n in tobs:
-            ax[n] = ax[n] + (x[n] - xo[n])
-            ay[n] = ay[n] + (y[n] - yo[n])
     return np.concatenate([aa, [ax[0], ay[0]]])
 
 def fn(par, dt, nmax, xo, yo, tobs):
