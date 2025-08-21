@@ -8,7 +8,7 @@ close(con)
 
 png("cost.png", 900, 450)
 plot(log10(cost), type = "l", lwd = 2,
-     main = paste("cost", alg), xlab = "Iteration", ylab = "J",
+     main = paste("cost", alg), xlab = "Iteration", ylab = "log10(J)",
      cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
 dev.off()
 
