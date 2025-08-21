@@ -30,12 +30,14 @@ if __name__ == "__main__":
     seed = 514
     rng = np.random.default_rng(seed)
 
+    # nature run
     nmax = 500
     dt = 0.001
     at = [4, -2, -4, -6, 2, 4]
     w1 = [1, 1] + at
     wt = predict_state(w1, dt, nmax)
 
+    # create observations
     sr = 5e-2
     iobs1 = 10
     dobs = 10
@@ -44,9 +46,11 @@ if __name__ == "__main__":
     yo = wt[:, tobs] + rng.normal(0, sr, 2 * ntobs).reshape(2, ntobs)
     rmat = np.diag(np.repeat(sr**2, 2))
 
+    # simulation run
     #a = [1, 0, 0, -1, 0, 0] # inexact parameters
     a = at
-    xa = np.array([2, 2] + a)
+    xa = np.array([1.5, 1.5] + a)
+    wf = predict_state(xa, dt, nmax)
 
     hmat = np.identity(2)
     sb = 0.1
@@ -90,17 +94,63 @@ if __name__ == "__main__":
     dpi = 144
     fig_size = (9, 4.5)
     fig, ax = plt.subplots(figsize = fig_size)
+    ax.plot(range(nmax), wt[0, :], color = "black", 
+            linewidth = 3, linestyle = "--", label = "xt")
+    ax.plot(range(nmax), wt[1, :], color = "red", 
+            linewidth = 3, linestyle = "--", label = "yt")
+    ax.plot(tobs, yo[0, :], color = "black", 
+            linewidth = 0, marker = 'x', label = "xo")
+    ax.plot(tobs, yo[1, :], color = "red", 
+            linewidth = 0, marker = 'x', label = "yo")
+    ax.set_xlabel("t")
+    ax.set_ylabel("x,y")
+    ax.set_ylim([0, 2])
+    ax.set_title("nature run + obs")
+    ax.legend(loc = "upper right", ncol = 2)
+    fig.savefig("true_obs.png", dpi=dpi)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize = fig_size)
+    ax.plot(range(nmax), wt[0, :], color = "black", 
+            linewidth = 3, linestyle = "--", label = "xt")
+    ax.plot(range(nmax), wt[1, :], color = "red", 
+            linewidth = 3, linestyle = "--", label = "yt")
+    ax.plot(range(nmax), wf[0, :], color = "black", 
+            linewidth = 2, linestyle = ":", label = "xf")
+    ax.plot(range(nmax), wf[1, :], color = "red", linewidth = 2,
+            linestyle = ":", label = "yf")
+    ax.plot(tobs, yo[0, :], color = "black", 
+            linewidth = 0, marker = 'x', label = "xo")
+    ax.plot(tobs, yo[1, :], color = "red", 
+            linewidth = 0, marker = 'x', label = "yo")
+    ax.set_xlabel("t")
+    ax.set_ylabel("x,y")
+    ax.set_ylim([0, 2])
+    ax.set_title("nature run + obs + free run")
+    ax.legend(loc = "upper right", ncol = 2)
+    fig.savefig("free_run.png", dpi=dpi)
+    plt.close(fig)
+
+    fig, ax = plt.subplots(figsize = fig_size)
     ax.plot(t_hist, x_hist, color = "black", label = "x")
     ax.plot(t_hist, y_hist, color = "red", label = "y")
     ax.plot(range(nmax), wt[0, :], color = "black", 
             linewidth = 3, linestyle = "--", label = "xt")
-    ax.plot(range(nmax), wt[1, :], color = "red", linewidth = 3,
-            linestyle = "--", label = "xt")
+    ax.plot(range(nmax), wt[1, :], color = "red", 
+            linewidth = 3, linestyle = "--", label = "yt")
+    ax.plot(range(nmax), wf[0, :], color = "black", 
+            linewidth = 2, linestyle = ":", label = "xf")
+    ax.plot(range(nmax), wf[1, :], color = "red", linewidth = 2,
+            linestyle = ":", label = "yf")
+    ax.plot(tobs, yo[0, :], color = "black", 
+            linewidth = 0, marker = 'x', label = "xo")
+    ax.plot(tobs, yo[1, :], color = "red", 
+            linewidth = 0, marker = 'x', label = "yo")
     ax.set_xlabel("t")
     ax.set_ylabel("x,y")
     ax.set_ylim([0, 2])
     ax.set_title("EKF state")
-    ax.legend(loc = "upper right")
+    ax.legend(loc = "upper right", ncol = 2)
     fig.savefig("state.png", dpi=dpi)
     plt.close(fig)
 
@@ -108,11 +158,11 @@ if __name__ == "__main__":
     ax.plot(t_hist, p_hist[:, 0], color = "blue", label = "Pxx")
     ax.plot(t_hist, p_hist[:, 1], color = "red", label = "Pyy")
     ax.plot(t_hist, p_hist[:, 2], color = "purple", label = "Pxy=Pyx")
-    ax.axhline(sr**2, linestyle = ":", color = "gray")
+    ax.axhline(sr**2, linestyle = ":", color = "gray", label = "R")
     ax.set_xlabel("t")
     ax.set_ylabel("P")
     ax.set_ylim([-0.02, 0.02])
     ax.set_title("EKF error covariance")
-    ax.legend(loc = "upper right")
+    ax.legend(loc = "upper right", ncol = 2)
     fig.savefig("errcov.png", dpi=dpi)
     plt.close(fig)
