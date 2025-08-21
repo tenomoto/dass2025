@@ -2,7 +2,7 @@ load("out_adjoint.RData")
 
 png("cost.png", 900, 450)
 plot(log10(hist$cost), type = "l", lwd = 2,
-     main = paste("cost", alg), xlab = "Iteration", ylab = "log10|g|",
+     main = paste("cost", alg), xlab = "Iteration", ylab = "log10|J|",
      cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
 dev.off()
 

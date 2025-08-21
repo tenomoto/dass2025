@@ -69,9 +69,9 @@ calc.cost <- function(wf, wo, tobs) {
 }
 
 nmax <- 200
-r <- 32.0
-s <- 10.0
-b <- 8 / 3
+rt <- 32.0
+st <- 10.0
+bt <- 8 / 3
 dt <- 0.01
 x1 <- 1
 y1 <- 3
@@ -81,17 +81,17 @@ dobs <- 60
 iobs <- dobs
 
 tobs <- seq(iobs, nmax, by = dobs)
-wt <- forward(dt, r, s, b, x1, y1, z1, nmax)
+wt <- forward(dt, rt, st, bt, x1, y1, z1, nmax)
 wo <- wt
 
 r <- 30.0
-s <- 10.0
-b <- 1
+s <- 11.0
+b <- 2
 x1 <- 1.1
 y1 <- 3.3
 z1 <- 5.5
 par <- c(r, s, b, x1, y1, z1)
-cntl <- list(maxit = 100, reltol = 1e-5)
+#cntl <- list(maxit = 100, reltol = 1e-5)
 
 hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 
@@ -105,5 +105,37 @@ hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 #res <- optim(par, fn, gr, method = alg, control = cntl, dt, nmax, wo, tobs)
 
 alg <- "nvm"
-res <- optimr(par, fn, gr, method = alg,
+#alg <- "BFGS"
+res <- optimr(par, fn, gr, method = alg, control = cntl,
               dt = dt, nmax = nmax, wo = wo, tobs = tobs)
+
+#png("cost.png_l63", 900, 450)
+plot(log10(hist$cost), type = "l", lwd = 2,
+     main = paste("cost", alg), xlab = "Iteration", ylab = "log10|J|",
+     cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
+#dev.off()
+
+#png("gnorm_l63.png", 900, 450)
+plot(log10(hist$gnorm), type = "l", lwd = 2,
+     main = paste("gnorm", alg), xlab = "Iteration", ylab = "log10|g|",
+     cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
+#dev.off()
+
+#png("init_l63.png", 900, 450)
+plot(hist$par[, 4], ylim = c(0, 8), type = "l", lwd = 2, xlab = "Iteration", ylab = "Initial conditions",
+     main = paste("init", alg), cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
+lines(hist$par[, 5], lwd = 2, col = "red")
+lines(hist$par[, 6], lwd = 2, col = "blue")
+legend("topright", legend = c("X", "Y", "Z"),
+       col = c("black", "red", "blue"), lwd = 2, cex = 1)
+#dev.off()
+
+#png("param_l63.png", 900, 450)
+plot(hist$par[, 1] - rt, ylim = c(-2, 2), type = "l", lwd = 2,
+     main = paste("param", alg), xlab = "Iteration", ylab = "parameter error",
+     cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
+lines(hist$par[, 2] - st, lwd = 2, col = "red")
+lines(hist$par[, 3] - bt, lwd = 2, col = "blue")
+legend("topright", legend = c(expression("r" - r[t]), expression(sigma-sigma[t]), expression(beta-beta[t])),
+       col = c("black", "red", "blue"), lwd = 2, cex = 1)
+#dev.off()
