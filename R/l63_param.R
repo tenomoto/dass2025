@@ -101,27 +101,32 @@ hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 #  cost <- fn(par, dt, nmax, wo, tobs)
 #  par <- par - alpha * grad
 #}
+
 #alg <- "BFGS"
 #res <- optim(par, fn, gr, method = alg, control = cntl, dt, nmax, wo, tobs)
 
 alg <- "nvm"
-#alg <- "BFGS"
-res <- optimr(par, fn, gr, method = alg, control = cntl,
+res <- optimr(par, fn, gr, method = alg,
               dt = dt, nmax = nmax, wo = wo, tobs = tobs)
+#alg <- "BFGS"
+#res <- optimr(par, fn, gr, method = alg, control = cntl,
+#              dt = dt, nmax = nmax, wo = wo, tobs = tobs)
 
-#png("cost.png_l63", 900, 450)
+cat("Optimized Parameters:", res$par, "\n")
+
+#png("cost_l63_param.png", 900, 450)
 plot(log10(hist$cost), type = "l", lwd = 2,
      main = paste("cost", alg), xlab = "Iteration", ylab = "log10(J)",
      cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
 #dev.off()
 
-#png("gnorm_l63.png", 900, 450)
+#png("gnorm_l63_param.png", 900, 450)
 plot(log10(hist$gnorm), type = "l", lwd = 2,
      main = paste("gnorm", alg), xlab = "Iteration", ylab = "log10|g|",
      cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
 #dev.off()
 
-#png("init_l63.png", 900, 450)
+#png("init_l63_param.png", 900, 450)
 plot(hist$par[, 4], ylim = c(0, 8), type = "l", lwd = 2, xlab = "Iteration", ylab = "Initial conditions",
      main = paste("init", alg), cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
 lines(hist$par[, 5], lwd = 2, col = "red")
@@ -130,7 +135,7 @@ legend("topright", legend = c("X", "Y", "Z"),
        col = c("black", "red", "blue"), lwd = 2, cex = 1)
 #dev.off()
 
-#png("param_l63.png", 900, 450)
+#png("param_l63_param.png", 900, 450)
 plot(hist$par[, 1] - rt, ylim = c(-2, 2), type = "l", lwd = 2,
      main = paste("param", alg), xlab = "Iteration", ylab = "parameter error",
      cex.main = 1.5, cex.lab = 1.5, cex.axis = 1.5)
