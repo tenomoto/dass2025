@@ -341,7 +341,7 @@
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" width="960"></p>
+<p><img data-src="index_files/figure-revealjs/unnamed-chunk-2-1.png" class="quarto-figure quarto-figure-center" width="595"></p>
 </figure>
 </div>
 </div>
@@ -362,9 +362,9 @@
 <h2>Lagrangeの未定乗数法</h2>
 <ul>
 <li>モデル<span class="math inline">\(F(X, Z, ...)\)</span>、制御変数 <span class="math inline">\(X\)</span>、状態変数 <span class="math inline">\(Z\)</span></li>
-<li>各ステップの未定乗数 <span class="math inline">\(\lambda_n\)</span> を随伴モデルから求める。</li>
-<li><span class="math inline">\(\lambda_n\)</span> と <span class="math inline">\(Z\)</span> に関するモデルの微分の積の総和</li>
-<li>各ステップでは以下を計算</li>
+<li>ステップ <span class="math inline">\(n\)</span> での <span class="math inline">\(\lambda_Z\)</span> は <span class="math inline">\(X\)</span> に関するモデルの微分と<br>ステップ <span class="math inline">\(n+1\)</span> での <span class="math inline">\(\lambda_Z\)</span>との積</li>
+<li>観測がある時刻はコスト函数の <span class="math inline">\(Z\)</span> の微分を加える。</li>
+<li><span class="math inline">\(\lambda_X\)</span>は <span class="math inline">\(\lambda_Z\)</span> と <span class="math inline">\(X\)</span> に関するモデルの微分の積の総和</li>
 </ul>
 <p><span class="math display">\[
 \lambda_X = \lambda_X + \lambda_Z\frac{\partial F}{\partial X}
@@ -386,9 +386,9 @@
 <ul>
 <li>時間を逆行するので、コードを逆順に辿る。</li>
 <li>ループは逆に回す。</li>
-<li>順行コードの右辺を制御変数 <code>a_6</code> で微分する。</li>
+<li>順行コードの右辺を制御変数 <code>a6</code> で微分する。</li>
 <li>微分に状態変数の随伴 <code>ay</code> を掛ける。</li>
-<li>これを制御変数の随伴 <code>a_6</code> に足し込む。</li>
+<li>これを制御変数の随伴 <code>a6</code> に足し込む。</li>
 <li>制御変数 <code>y</code> が複数回出てきたら、それぞれ微分する。</li>
 <li>全ての制御変数について行う。</li>
 <li>随伴変数は0に初期化する。</li>
