@@ -104,6 +104,7 @@ hist <- list(cost = numeric(0), gnorm = numeric(0), par = vector(length=0))
 
 #alg <- "BFGS"
 #res <- optim(par, fn, gr, method = alg, control = cntl, dt, nmax, wo, tobs)
+#res <- optim(par, fn, gr, method = alg, dt, nmax, wo, tobs)
 
 alg <- "nvm"
 res <- optimr(par, fn, gr, method = alg,

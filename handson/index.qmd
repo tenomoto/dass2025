@@ -353,6 +353,38 @@ $$
     - 最適化手法を変えてみる。
     - 背景誤差や観測誤差を考慮する。
 
+# 付録
+
+## 質問と回答
+
+- Q: 随伴変数を0に初期化したら，最後まで0
+- A: 観測時刻にはコスト函数 $J$ の勾配が加わる．
+
+## 未定乗数法の詳細
+
+$$
+\begin{aligned}
+L&(\mathbf{x},\,z_1, \dots, z_N,\,\lambda_1,\dots,\lambda_N) = J(\mathbf{x},\,z_{1},\dots,z_N)\\&-\lambda_1(z_1 - f_1(\mathbf{x})) - \sum_{n=2}^{N} \lambda_n(z_n - f_n(\mathbf{x}, z_{n-1}))
+\end{aligned}
+$$
+
+- 制御変数 $\mathbf{x} = (x_1, \dots, x_m)^\mathrm{T}$
+- 時間ステップ $n$ での状態変数の一つ $z_n,\,n = 1, \dots, N$
+- 観測 $\mathbf{y} = (y_1, \dots, y_k)^\mathrm{T}$
+- コスト函数の例 $J = \sum_{i=1}^k (y_k - h(z_n(t_n=t_k)))^2$ 
+
+## 鞍点は最適値
+
+- $\partial L/\partial\boldsymbol\lambda$: 制約に用いる順行モデル $z_n = f_n(\mathbf{x}, z_{n-1})$
+- $\partial L/\partial\mathbf{z}$: 随伴モデル
+$$\lambda_N = \frac{\partial J}{\partial Z_N},\,\lambda_n = \frac{\partial J}{\partial z_n} + \frac{\partial f_{n+1}}{\partial z_n}\lambda_{n+1}$$
+- $\partial L/\partial\mathbf{x}$: $J$の制御変数についての勾配 
+
+$$
+\frac{\partial J}{\partial x_k}
+= \sum_{i=1}^N \frac{\partial f_i}{\partial x_k}\lambda_i,\,k = 1,\dots, m
+$$
+
 ## 参考文献
 
 ::: refs

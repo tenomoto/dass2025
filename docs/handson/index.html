@@ -561,6 +561,44 @@ X^{(i+1)} = X^{(i)} - \alpha\nabla_{X(0)}J
 </ul></li>
 </ul>
 </section>
+<section>
+<section id="付録" class="title-slide slide level1 center">
+<h1>付録</h1>
+
+</section>
+<section id="質問と回答" class="slide level2">
+<h2>質問と回答</h2>
+<ul>
+<li>Q: 随伴変数を0に初期化したら，最後まで0</li>
+<li>A: 観測時刻にはコスト函数 <span class="math inline">\(J\)</span> の勾配が加わる．</li>
+</ul>
+</section>
+<section id="未定乗数法の詳細" class="slide level2">
+<h2>未定乗数法の詳細</h2>
+<p><span class="math display">\[
+\begin{aligned}
+L&amp;(\mathbf{x},\,z_1, \dots, z_N,\,\lambda_1,\dots,\lambda_N) = J(\mathbf{x},\,z_{1},\dots,z_N)\\&amp;-\lambda_1(z_1 - f_1(\mathbf{x})) - \sum_{n=2}^{N} \lambda_n(z_n - f_n(\mathbf{x}, z_{n-1}))
+\end{aligned}
+\]</span></p>
+<ul>
+<li>制御変数 <span class="math inline">\(\mathbf{x} = (x_1, \dots, x_m)^\mathrm{T}\)</span></li>
+<li>時間ステップ <span class="math inline">\(n\)</span> での状態変数の一つ <span class="math inline">\(z_n,\,n = 1, \dots, N\)</span></li>
+<li>観測 <span class="math inline">\(\mathbf{y} = (y_1, \dots, y_k)^\mathrm{T}\)</span></li>
+<li>コスト函数の例 <span class="math inline">\(J = \sum_{i=1}^k (y_k - h(z_n(t_n=t_k)))^2\)</span></li>
+</ul>
+</section>
+<section id="鞍点は最適値" class="slide level2">
+<h2>鞍点は最適値</h2>
+<ul>
+<li><span class="math inline">\(\partial L/\partial\boldsymbol\lambda\)</span>: 制約に用いる順行モデル <span class="math inline">\(z_n = f_n(\mathbf{x}, z_{n-1})\)</span></li>
+<li><span class="math inline">\(\partial L/\partial\mathbf{z}\)</span>: 随伴モデル <span class="math display">\[\lambda_N = \frac{\partial J}{\partial Z_N},\,\lambda_n = \frac{\partial J}{\partial z_n} + \frac{\partial f_{n+1}}{\partial z_n}\lambda_{n+1}\]</span></li>
+<li><span class="math inline">\(\partial L/\partial\mathbf{x}\)</span>: <span class="math inline">\(J\)</span>の制御変数についての勾配</li>
+</ul>
+<p><span class="math display">\[
+\frac{\partial J}{\partial x_k}
+= \sum_{i=1}^N \frac{\partial f_i}{\partial x_k}\lambda_i,\,k = 1,\dots, m
+\]</span></p>
+</section>
 <section id="参考文献" class="slide level2 smaller scrollable">
 <h2>参考文献</h2>
 <div class="refs">
@@ -585,7 +623,7 @@ Nober, F. J., and H. F. Graf, 2005: A new convective cloud field model based on 
 Volterra, V., 1926: Fluctuations in the abundance of a species considered mathematically. <em>Nature</em>, <strong>118</strong>, 558–560, <a href="https://doi.org/10.1038/118558a0">https://doi.org/10.1038/118558a0</a>.
 </div>
 </div>
-</section>
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
