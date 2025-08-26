@@ -375,7 +375,7 @@ x <- np$load("x.npy")
 - 順行・勾配計算は[CoDiPack](https://github.com/SciCompKL/CoDiPack)
 - フレームワークのオーバーヘッドを回避して高速化
 - Rパッケージ[optimx](https://github.com/nashjc/optimx)の`nvm`
-- 真値: $(r,\sigma, \beta) = $32, 10, 8/3),\, (X, Y, Z) = (1, 3, 5)$
+- 真値: $(r,\sigma, \beta) = (32, 10, 8/3),\, (X, Y, Z) = (1, 3, 5)$
 - 第一推定値: `30 11 2 1.1 3.3 5.5 `
 - torch for R: 62回 `32. 10.00 2.667 0.8989 3.128 5.012`
 - nvm: 358回 機械精度で厳密に推定
