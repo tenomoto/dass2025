@@ -1,0 +1,429 @@
+---
+title: "Rによるデータ同化と機械学習"
+author: "榎本剛"
+format:
+  revealjs:
+    footer: RDAML
+    slide-number: true
+    slide-navigation: true
+    controls: true
+#    chalkboard:
+#      buttons: false
+    embed-resources: true
+    preview-links: auto
+    auto-stretch: false
+bibliography: refs.bib
+engine: knitr
+---
+
+# Rとは
+
+## Rは統計言語を超越
+
+@Gagolewski:2024
+
+<quote>
+Let’s get one thing straight: R is <mark>not just a statistical package</mark>.
+It is a general-purpose, high-level programming language that happens to be very powerful for <mark>numerical, data-intense computing</mark> activities of any kind.
+It offers extensive support for statistical, <mark>machine learning</mark>, data analysis, data wrangling, and data visualisation applications, but there is much more.
+<quote>
+
+## Why use R for oceanographic analysis?
+
+<blockquote>
+With its broad <mark>statistical</mark> support, R is a natural choice for oceanographers in <mark>the biological, chemical and geological sub-disciplines</mark>. However, some physical oceanographers have remained attached to Matlab, ... Lately, this has been changing, as oceanographers turn to open-source systems such as Python and R. A particular strength of R is its provision of <mark>many powerful and well-vetted packages</mark> for handling specialized calculations. The [oce](https://dankelley.github.io/oce/) package is a prime example.
+</blockquote>
+
+---
+
+![](oce-demo-1.png){height=700px fig-align=center}
+
+## Rは何なのか
+
+- 思いつきの確認、データ探索、高速プロトタイプの道具
+- Python + pandas + matplotlibやJulia、MATLABに相当するプログラミング環境
+- 再現性のある科学 (@Schwab-etal:2000;@Gentleman-TempleLang:2007;@Marwick-etal:2018)
+
+## Rの特徴
+
+- 基本的な数学函数、統計、行列計算、描画を含む。
+- 添字は1始まり。負の添字は削除。
+- 配列`array()`や行列`matrix()`は列優先で数式と対応。
+- （緩い）函数型 `func()`
+- Copy on modify
+- 環境構築のしやすさ
+    - バッケージ [CRAN](https://ftp.yz.yamagata-u.ac.jp/pub/cran/)
+    - [WindowsのRtools](https://www.dpac.dpri.kyoto-u.ac.jp/enomoto/dass2025/setup.html)でコンパイル環境まで整う。
+
+# Pythonに疲れてない？
+
+## 正規分布 {.scrollable}
+
+::: {.panel-tabset}
+
+### Python
+
+```{python}
+#| echo: true
+#| error: false
+
+import numpy as np
+from scipy.stats import norm
+import matplotlib.pyplot as plt
+
+fig, ax = plt.subplots()
+
+x = np.linspace(-5, 5, 101)
+y = norm.pdf(x)
+ax.plot(x, y)
+ax.set_title("normal distribution")
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+plt.show()
+```
+### R
+
+```{r}
+#| echo: true
+curve(dnorm, -5, 5, main="normal distribution", xlab="x", ylab="y")
+```
+
+:::
+
+## アンサンブル偏差
+
+::: {.panel-tabset}
+
+### R
+```{r}
+#| echo: true
+(x <- matrix(0:11, ncol=4))
+(xbar <- apply(x, 1, mean)) # rowMeans(x)
+x - xbar # sweep(x, 1, xbar)
+```
+### Python
+```{python}
+#| echo: True
+x = np.arange(12).reshape([4, 3]).transpose()
+print(x)
+xbar = x.mean(axis=1)
+print(xbar)
+x - xbar[:,None]
+```
+:::
+
+## Rと私
+
+* 渋谷政昭・柴田里程, 1992: [Sによるデータ解析](https://www.kyoritsu-pub.co.jp/book/b10005973.html)
+* アンサンブル予報の父、経田さんにRを勧められる。
+* rglやRMarkdownがきっかけで、2019年頃からRを再び使い始める。
+* 2023年からILASセミナーはPythonからRに。
+* 2024・2025年データ同化夏の学校の課題をRで書く。
+
+# Rの環境
+
+## CRAN
+
+![](CRAN.png)
+
+## RStudio
+
+![](RStudio.png){height=17cm fig-align="center"}
+
+## Jupyter
+
+```r
+install.packages("IRkernel")
+installspec()
+```
+
+![](Jupyter.png){height=15cm fig-align="center"}
+
+## Google colaboratory
+
+![](Colab.png){height=15cm fig-align="center"}
+
+## Rでできること
+
+![](rmetds.png){width=10%}[Rによる気象データサイエンス](https://www.dpac.dpri.kyoto-u.ac.jp/enomoto/rmetds)
+
+- テキスト処理 [stringi](https://stringi.gagolewski.com/), [stringx](https://stringx.gagolewski.com/), [stringr](https://stringr.tidyverse.org/)
+- 回帰分析、主成分分析 [SpectrA](https://spectralib.org/)
+- データ同化 夏学[2024](https://www.dpac.dpri.kyoto-u.ac.jp/enomoto/dass2024/)、[2025](https://tenomoto.github.io/dass2025/)
+- モデル: 前線形成、Poisson方程式、Lorenz-96
+- 機械学習、[画像処理](https://dahtah.github.io/imager/imager.html)、3D可視化[rgl](https://dmurdoch.github.io/rgl/)
+- 他の言語とのインターフェース
+
+## R中心生活 ![](rchu.png){fig-align="bottom" width=10%}
+
+![](rchu-page.png){height=500px}
+
+## 線型回帰 {.scrollable}
+
+```{r}
+#| echo: true
+df <- read.csv("co2_annual_20221026.csv")
+lm.co2 <- lm(df$co2.global.mean.ppm. ~ df$year)
+plot(df$year, df$co2.global.mean.ppm.,
+     main="Global Mean CO2 concentration",
+     xlab="year", ylab="CO2 ppm")
+abline(lm.co2)
+```
+
+## 3次元描画
+
+[rgl](https://cran.r-project.org/web/packages/rgl/index.html)
+
+```{r}
+#| webgl: true
+#| cache: false
+#| output: false
+#| fig-align: "center"
+library(rgl)
+
+options(rgl.useNULL = TRUE)                                   
+rgl::setupKnitr()
+
+n <- 512
+m <- sqrt(n * pi)
+k <- 1:n
+z <- 1 - (2 * k - 1) / n
+theta <- acos(z)
+lambda <- m * theta
+x <- cos(lambda) * sin(theta)
+y <- sin(lambda) * sin(theta)
+
+nl <- n * 8
+kl <- 1:nl
+zl <- 1 - (2 * kl - 1) / nl
+thetal <- acos(zl)
+lambdal <- m * thetal
+xl <- cos(lambdal) * sin(thetal)
+yl <- sin(lambdal) * sin(thetal)
+
+open3d()
+spheres3d(0, 0, 0, 1, color="lightblue")
+lines3d(xl, yl, zl, lwd = 3, color="darkgray")
+spheres3d(x, y, z, radius = 0.03, color="orange")
+
+view3d(theta=15, phi=-45)
+```
+
+## NCEP再解析
+
+[terra](https://rspatial.github.io/terra/reference/terra-package.html)と[RNetCDF](https://github.com/mjwoods/RNetCDF)
+
+```{r}
+#| fig-align: "center"
+library(terra)
+library(RNetCDF)
+
+nc <- open.nc("slp.mon.ltm.nc")
+slp <- var.get.nc(nc, "slp")
+slp.ras <- rast(xmin=0, xmax=360, ymin=-90, ymax=90, ncols=144, nrows=73)
+values(slp.ras) <- t(slp[,,1])
+slp.ras.c <- crop(slp.ras, ext(0, 360, -30, 90))
+
+cshp <- "ne_50m_coastline/ne_50m_coastline.shp"
+c50 <- vect(cshp)
+
+newcrs <- "+proj=stere +lon_0=135e +lat_0=90n"
+c50p <- project(c50, newcrs)
+
+slp.ras.p <- project(slp.ras.c, newcrs)
+g <- graticule(30, 30, crs=newcrs)
+plot(slp.ras.p, axes=FALSE, ext=ext(-1e+7, 1e7, -1e7, 1e7), main="January  Climatological SLP hPa")
+plot(c50p, add=TRUE)
+plot(g, add=TRUE)
+```
+
+## 奥能登豪雨
+
+![](jrdr20240921.png){fig-align="center" height=600}
+
+## 湿潤函数
+
+![](mettools.png)
+
+## Lorenz-96 {.scrollable}
+
+```{r}
+#| echo: true
+#| code-fold: true
+#| fig-align: "center"
+l96 <- function(x, F) {
+  n <- length(x)
+  (x[c(2:n, 1)] - x[c(n-1, n, 1:(n-2))]) * x[c(n, 1:(n-1))] - x + F
+}
+
+rk4 <- function(f, x, dt, opts) {
+  k1 <- f(x, opts)
+  k2 <- f(x + 0.5 * dt * k1, opts)
+  k3 <- f(x + 0.5 * dt * k2, opts)
+  k4 <- f(x + dt * k3, opts)
+  x + (k1 + 2 * k2 + 2 * k3 + k4) * dt / 6
+}
+
+nj <- 40
+nstep <- 1001
+x.hist <- matrix(0, nj, nstep)
+x <- rnorm(nj)
+F <- 8
+dt <- 0.05
+for (i in 1:nstep-1) {
+  x <- rk4(l96, x, dt, F)
+  x.hist[,i] <- x
+}
+
+t <- seq(0, nstep*dt, length.out=nstep)
+filled.contour(1:nj, t, x.hist, nlevel=11, main=paste("Lorenz 96 F=", F),
+               ylim=rev(range(t)), xlab="j", ylab="time")
+```
+
+## Rの機械学習ライブラリ
+
+- [CRAN TaskView](https://cran.r-project.org/web/views/MachineLearning.html)
+- [e1071](https://cran.r-project.org/web/packages/e1071/): 潜在クラス解析、短時間フーリエ解析、ファジークラスタリング、SVM、最短経路計算、バッグドクラスタリング、単純ベイズ分類、一般化k近傍
+- [kernlab](https://cran.r-project.org/web/packages/kernlab/): カーネル学習。分類（SVM）、回帰（分位点回帰、ガウス過程回帰）、 クラスタリング（スペクトラルクラスタリング）異常検知、次元削減（カーネルPCA）、最適化（二次計画法ソルバ）
+- [caret](https://topepo.github.io/caret/): 分類、回帰、訓練
+ 
+## 自動微分と数値最適化 {.scrollable}
+
+::::{.columns}
+::: {.column}
+[torch for R](https://torch.mlverse.org/)
+自動微分を使って<br>
+L-BFGSで数値最適化
+
+```{r}
+#| echo: true
+#| code-fold: true
+
+library(torch)
+
+rosenbrock <- function(x, y, a = 1, b = 100) {
+  (a - x)^2 + b * (y - x^2)^2
+}
+
+x <- torch_tensor(c(-1, -1), requires_grad = TRUE)
+
+optimizer <- optim_lbfgs(x, line_search_fn = "strong_wolfe")
+
+calc_loss <- function() {
+  optimizer$zero_grad()
+  value <- rosenbrock(x[1], x[2])
+  cat("value is:", as.numeric(value), "\n")
+  value$backward()
+  value
+}
+
+num_iterations <- 2
+tol <- 1e-10
+xhist <- as.numeric(x)
+for (i in 1:num_iterations) {
+  cat("\n", "iteration:", i, "\n")
+  optimizer$step(calc_loss)
+  cat("x=", as.numeric(x), "\n")
+  xhist <- rbind(xhist, as.numeric(x))
+}
+
+x <- seq(-1, 2, 0.01)
+y <- seq(-1, 2, 0.01)
+z <- outer(x, y, rosenbrock)
+```
+:::
+::: {.column}
+```{r}
+#| fig-height: 12
+par(cex = 2)
+contour(x, y, z, levels=4^(0:10), labcex=2)
+points(xhist[,1], xhist[,2], pch=16)
+lines(xhist[,1], xhist[,2], lwd=3)
+```
+:::
+::::
+
+## フーリエニューラル演算子
+
+@Li-etal:2021
+
+![](fourier_full_arch5.png)
+
+## FNO in torch for R
+
+![](fno_test.png)
+
+## RからPythonを使う
+
+- [reticulate](https://rstudio.github.io/reticulate/)
+
+```r
+library(reticulate)
+
+np <- import("numpy")
+x <- np$load("x.npy")
+```
+
+- [tensorflow](https://cran.r-project.org/web/packages/tensorflow/index.html) へのインターフェースに利用されている。
+
+## Rcpp {.scrollable}
+
+- RとC++のインターフェース
+- 順行・勾配計算は[CoDiPack](https://github.com/SciCompKL/CoDiPack)
+- フレームワークのオーバーヘッドを回避して高速化
+- Rパッケージ[optimx](https://github.com/nashjc/optimx)の`nvm`
+- 真値: $(r,\sigma, \beta) = $32, 10, 8/3),\, (X, Y, Z) = (1, 3, 5)$
+- 第一推定値: `30 11 2 1.1 3.3 5.5 `
+- torch for R: 62回 `32. 10.00 2.667 0.8989 3.128 5.012`
+- nvm: 358回 機械精度で厳密に推定
+
+```
+
+## 表をきれいに {.scrollable}
+
+:::: {.columns}
+::: {.column}
+```r
+library(tinytable)
+trunc <- c(39, 79, 119, 239, 639, 1279)
+nlon <- 3 * (trunc + 1)
+nlat <- nlon / 2
+df <- data.frame(trunc, nlon, nlat)
+tab <- tt(df)
+style_tt(tab, align="r")
+```
+:::
+:::  {.column}
+```{r }
+library(tinytable)
+trunc <- c(39, 79, 119, 239, 639, 1279)
+nlon <- 3 * (trunc + 1)
+nlat <- nlon / 2
+df <- data.frame(trunc, nlon, nlat)
+tab <- tt(df)
+style_tt(tab, align="r")
+```
+:::
+::::
+
+## Quarto
+
+RMarkdownの進化形
+
+- このスライドはMarkdownを拡張した記法で、<br>[Quarto](https://quarto.org/)を使って作成。
+- 数式、RやPythonなどコードの実行。
+- [Pandoc](https://pandoc.org/)を使ってHTML、LaTeX、Wordなどに出力。
+- `bib`ファイルによる文献引用。
+
+## まとめ
+
+- Rは探索的データ解析に適した統計・描画環境。
+- 海洋・気象・地理データの描画や解析もできる。
+- 統計学者など専門家が作成した高品質なパッケージ。
+- モデル、データ同化、機械学習のプロトタイプ作成。
+- Pythonのモジュールの利用やC++による高速化も可能。
+
+## 参考文献
+
+::: {#refs}
+:::

@@ -182,6 +182,202 @@
     "text": "参考文献\n\n\n\n\n\n\n\nFranks, P. J. S., J. S. Wroblewski, and G. R. Flierl, 1986: Behavior of a simple plankton model with food-level acclimation by herbivores. Marine Biol., 91, 121–129, https://doi.org/10.1007/BF00397577.\n\n\nLawson, L. M., Y. H. Spitz, E. E. Hofmann, and R. B. Long, 1995: A data assimilation technique applied to a predator-prey model. Bull. Math. Biol., 57, 593–617, https://doi.org/10.1016/S0092-8240(05)80759-1.\n\n\nLotka, A. J., 1920: Analytical note on certain rhythmic relations in organic systems. PNAS, 6, 410–415, https://doi.org/10.1073/pnas.6.7.410.\n\n\nNober, F. J., and H. F. Graf, 2005: A new convective cloud field model based on principles of self-organisation. Atmos. Chem. Phys., 5, 2749–2759, https://doi.org/10.5194/acp-5-2749-2005.\n\n\nVolterra, V., 1926: Fluctuations in the abundance of a species considered mathematically. Nature, 118, 558–560, https://doi.org/10.1038/118558a0."
   },
   {
+    "objectID": "rdaml/index.html#rは統計言語を超越",
+    "href": "rdaml/index.html#rは統計言語を超越",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rは統計言語を超越",
+    "text": "Rは統計言語を超越\nGagolewski (2024)\n Let’s get one thing straight: R is not just a statistical package. It is a general-purpose, high-level programming language that happens to be very powerful for numerical, data-intense computing activities of any kind. It offers extensive support for statistical, machine learning, data analysis, data wrangling, and data visualisation applications, but there is much more."
+  },
+  {
+    "objectID": "rdaml/index.html#why-use-r-for-oceanographic-analysis",
+    "href": "rdaml/index.html#why-use-r-for-oceanographic-analysis",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Why use R for oceanographic analysis?",
+    "text": "Why use R for oceanographic analysis?\n\nWith its broad statistical support, R is a natural choice for oceanographers in the biological, chemical and geological sub-disciplines. However, some physical oceanographers have remained attached to Matlab, … Lately, this has been changing, as oceanographers turn to open-source systems such as Python and R. A particular strength of R is its provision of many powerful and well-vetted packages for handling specialized calculations. The oce package is a prime example."
+  },
+  {
+    "objectID": "rdaml/index.html#rは何なのか",
+    "href": "rdaml/index.html#rは何なのか",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rは何なのか",
+    "text": "Rは何なのか\n\n思いつきの確認、データ探索、高速プロトタイプの道具\nPython + pandas + matplotlibやJulia、MATLABに相当するプログラミング環境\n再現性のある科学 (Schwab et al. (2000);Gentleman and Temple Lang (2007);Marwick et al. (2018))"
+  },
+  {
+    "objectID": "rdaml/index.html#rの特徴",
+    "href": "rdaml/index.html#rの特徴",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rの特徴",
+    "text": "Rの特徴\n\n基本的な数学函数、統計、行列計算、描画を含む。\n添字は1始まり。負の添字は削除。\n配列array()や行列matrix()は列優先で数式と対応。\n（緩い）函数型 func()\nCopy on modify\n環境構築のしやすさ\n\nバッケージ CRAN\nWindowsのRtoolsでコンパイル環境まで整う。"
+  },
+  {
+    "objectID": "rdaml/index.html#正規分布",
+    "href": "rdaml/index.html#正規分布",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "正規分布",
+    "text": "正規分布\n\nPythonR\n\n\n\nimport numpy as np\nfrom scipy.stats import norm\nimport matplotlib.pyplot as plt\n\nfig, ax = plt.subplots()\n\nx = np.linspace(-5, 5, 101)\ny = norm.pdf(x)\nax.plot(x, y)\nax.set_title(\"normal distribution\")\nax.set_xlabel(\"x\")\nax.set_ylabel(\"y\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\ncurve(dnorm, -5, 5, main=\"normal distribution\", xlab=\"x\", ylab=\"y\")"
+  },
+  {
+    "objectID": "rdaml/index.html#アンサンブル偏差",
+    "href": "rdaml/index.html#アンサンブル偏差",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "アンサンブル偏差",
+    "text": "アンサンブル偏差\n\nRPython\n\n\n\n(x &lt;- matrix(0:11, ncol=4))\n\n     [,1] [,2] [,3] [,4]\n[1,]    0    3    6    9\n[2,]    1    4    7   10\n[3,]    2    5    8   11\n\n(xbar &lt;- apply(x, 1, mean)) # rowMeans(x)\n\n[1] 4.5 5.5 6.5\n\nx - xbar # sweep(x, 1, xbar)\n\n     [,1] [,2] [,3] [,4]\n[1,] -4.5 -1.5  1.5  4.5\n[2,] -4.5 -1.5  1.5  4.5\n[3,] -4.5 -1.5  1.5  4.5\n\n\n\n\n\nx = np.arange(12).reshape([4, 3]).transpose()\nprint(x)\n\n[[ 0  3  6  9]\n [ 1  4  7 10]\n [ 2  5  8 11]]\n\nxbar = x.mean(axis=1)\nprint(xbar)\n\n[4.5 5.5 6.5]\n\nx - xbar[:,None]\n\narray([[-4.5, -1.5,  1.5,  4.5],\n       [-4.5, -1.5,  1.5,  4.5],\n       [-4.5, -1.5,  1.5,  4.5]])"
+  },
+  {
+    "objectID": "rdaml/index.html#rと私",
+    "href": "rdaml/index.html#rと私",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rと私",
+    "text": "Rと私\n\n渋谷政昭・柴田里程, 1992: Sによるデータ解析\nアンサンブル予報の父、経田さんにRを勧められる。\nrglやRMarkdownがきっかけで、2019年頃からRを再び使い始める。\n2023年からILASセミナーはPythonからRに。\n2024・2025年データ同化夏の学校の課題をRで書く。"
+  },
+  {
+    "objectID": "rdaml/index.html#cran",
+    "href": "rdaml/index.html#cran",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "CRAN",
+    "text": "CRAN"
+  },
+  {
+    "objectID": "rdaml/index.html#rstudio",
+    "href": "rdaml/index.html#rstudio",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "RStudio",
+    "text": "RStudio"
+  },
+  {
+    "objectID": "rdaml/index.html#jupyter",
+    "href": "rdaml/index.html#jupyter",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Jupyter",
+    "text": "Jupyter\ninstall.packages(\"IRkernel\")\ninstallspec()"
+  },
+  {
+    "objectID": "rdaml/index.html#google-colaboratory",
+    "href": "rdaml/index.html#google-colaboratory",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Google colaboratory",
+    "text": "Google colaboratory"
+  },
+  {
+    "objectID": "rdaml/index.html#rでできること",
+    "href": "rdaml/index.html#rでできること",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rでできること",
+    "text": "Rでできること\nRによる気象データサイエンス\n\nテキスト処理 stringi, stringx, stringr\n回帰分析、主成分分析 SpectrA\nデータ同化 夏学2024、2025\nモデル: 前線形成、Poisson方程式、Lorenz-96\n機械学習、画像処理、3D可視化rgl\n他の言語とのインターフェース"
+  },
+  {
+    "objectID": "rdaml/index.html#r中心生活",
+    "href": "rdaml/index.html#r中心生活",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "R中心生活 ",
+    "text": "R中心生活"
+  },
+  {
+    "objectID": "rdaml/index.html#線型回帰",
+    "href": "rdaml/index.html#線型回帰",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "線型回帰",
+    "text": "線型回帰\n\ndf &lt;- read.csv(\"co2_annual_20221026.csv\")\nlm.co2 &lt;- lm(df$co2.global.mean.ppm. ~ df$year)\nplot(df$year, df$co2.global.mean.ppm.,\n     main=\"Global Mean CO2 concentration\",\n     xlab=\"year\", ylab=\"CO2 ppm\")\nabline(lm.co2)"
+  },
+  {
+    "objectID": "rdaml/index.html#次元描画",
+    "href": "rdaml/index.html#次元描画",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "3次元描画",
+    "text": "3次元描画\nrgl"
+  },
+  {
+    "objectID": "rdaml/index.html#ncep再解析",
+    "href": "rdaml/index.html#ncep再解析",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "NCEP再解析",
+    "text": "NCEP再解析\nterraとRNetCDF"
+  },
+  {
+    "objectID": "rdaml/index.html#奥能登豪雨",
+    "href": "rdaml/index.html#奥能登豪雨",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "奥能登豪雨",
+    "text": "奥能登豪雨"
+  },
+  {
+    "objectID": "rdaml/index.html#湿潤函数",
+    "href": "rdaml/index.html#湿潤函数",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "湿潤函数",
+    "text": "湿潤函数"
+  },
+  {
+    "objectID": "rdaml/index.html#lorenz-96",
+    "href": "rdaml/index.html#lorenz-96",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Lorenz-96",
+    "text": "Lorenz-96\n\n\nCode\nl96 &lt;- function(x, F) {\n  n &lt;- length(x)\n  (x[c(2:n, 1)] - x[c(n-1, n, 1:(n-2))]) * x[c(n, 1:(n-1))] - x + F\n}\n\nrk4 &lt;- function(f, x, dt, opts) {\n  k1 &lt;- f(x, opts)\n  k2 &lt;- f(x + 0.5 * dt * k1, opts)\n  k3 &lt;- f(x + 0.5 * dt * k2, opts)\n  k4 &lt;- f(x + dt * k3, opts)\n  x + (k1 + 2 * k2 + 2 * k3 + k4) * dt / 6\n}\n\nnj &lt;- 40\nnstep &lt;- 1001\nx.hist &lt;- matrix(0, nj, nstep)\nx &lt;- rnorm(nj)\nF &lt;- 8\ndt &lt;- 0.05\nfor (i in 1:nstep-1) {\n  x &lt;- rk4(l96, x, dt, F)\n  x.hist[,i] &lt;- x\n}\n\nt &lt;- seq(0, nstep*dt, length.out=nstep)\nfilled.contour(1:nj, t, x.hist, nlevel=11, main=paste(\"Lorenz 96 F=\", F),\n               ylim=rev(range(t)), xlab=\"j\", ylab=\"time\")"
+  },
+  {
+    "objectID": "rdaml/index.html#rの機械学習ライブラリ",
+    "href": "rdaml/index.html#rの機械学習ライブラリ",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rの機械学習ライブラリ",
+    "text": "Rの機械学習ライブラリ\n\nCRAN TaskView\ne1071: 潜在クラス解析、短時間フーリエ解析、ファジークラスタリング、SVM、最短経路計算、バッグドクラスタリング、単純ベイズ分類、一般化k近傍\nkernlab: カーネル学習。分類（SVM）、回帰（分位点回帰、ガウス過程回帰）、 クラスタリング（スペクトラルクラスタリング）異常検知、次元削減（カーネルPCA）、最適化（二次計画法ソルバ）\ncaret: 分類、回帰、訓練"
+  },
+  {
+    "objectID": "rdaml/index.html#自動微分と数値最適化",
+    "href": "rdaml/index.html#自動微分と数値最適化",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "自動微分と数値最適化",
+    "text": "自動微分と数値最適化\n\n\ntorch for R 自動微分を使って L-BFGSで数値最適化\n\n\nCode\nlibrary(torch)\n\nrosenbrock &lt;- function(x, y, a = 1, b = 100) {\n  (a - x)^2 + b * (y - x^2)^2\n}\n\nx &lt;- torch_tensor(c(-1, -1), requires_grad = TRUE)\n\noptimizer &lt;- optim_lbfgs(x, line_search_fn = \"strong_wolfe\")\n\ncalc_loss &lt;- function() {\n  optimizer$zero_grad()\n  value &lt;- rosenbrock(x[1], x[2])\n  cat(\"value is:\", as.numeric(value), \"\\n\")\n  value$backward()\n  value\n}\n\nnum_iterations &lt;- 2\ntol &lt;- 1e-10\nxhist &lt;- as.numeric(x)\nfor (i in 1:num_iterations) {\n  cat(\"\\n\", \"iteration:\", i, \"\\n\")\n  optimizer$step(calc_loss)\n  cat(\"x=\", as.numeric(x), \"\\n\")\n  xhist &lt;- rbind(xhist, as.numeric(x))\n}\n\n\n\n iteration: 1 \nvalue is: 404 \nvalue is: 62.32629 \nvalue is: 30.0694 \nvalue is: 2.630802 \nvalue is: 1.178554 \nvalue is: 1.15742 \nvalue is: 1.132393 \nvalue is: 1.00142 \nvalue is: 1.091282 \nvalue is: 0.6181912 \nvalue is: 0.8905501 \nvalue is: 0.6098283 \nvalue is: 0.5655912 \nvalue is: 0.3922533 \nvalue is: 0.2774411 \nvalue is: 1.417702 \nvalue is: 0.2190705 \nvalue is: 0.1747326 \nvalue is: 0.1380794 \nvalue is: 0.08087045 \nvalue is: 0.05257415 \nvalue is: 0.1490689 \nvalue is: 0.0400695 \nvalue is: 0.02954894 \nvalue is: 0.01238139 \nx= 0.9039377 0.8114879 \n\n iteration: 2 \nvalue is: 0.01238139 \nvalue is: 0.006821597 \nvalue is: 0.002873288 \nvalue is: 0.001204705 \nvalue is: 0.0006028978 \nvalue is: 4.76946e-05 \nvalue is: 2.687239e-06 \nvalue is: 5.929914e-08 \nvalue is: 1.555293e-09 \nvalue is: 3.588241e-13 \nx= 0.9999999 0.9999998 \n\n\nCode\nx &lt;- seq(-1, 2, 0.01)\ny &lt;- seq(-1, 2, 0.01)\nz &lt;- outer(x, y, rosenbrock)"
+  },
+  {
+    "objectID": "rdaml/index.html#フーリエニューラル演算子",
+    "href": "rdaml/index.html#フーリエニューラル演算子",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "フーリエニューラル演算子",
+    "text": "フーリエニューラル演算子\nLi et al. (2021)"
+  },
+  {
+    "objectID": "rdaml/index.html#fno-in-torch-for-r",
+    "href": "rdaml/index.html#fno-in-torch-for-r",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "FNO in torch for R",
+    "text": "FNO in torch for R"
+  },
+  {
+    "objectID": "rdaml/index.html#rからpythonを使う",
+    "href": "rdaml/index.html#rからpythonを使う",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "RからPythonを使う",
+    "text": "RからPythonを使う\n\nreticulate\n\nlibrary(reticulate)\n\nnp &lt;- import(\"numpy\")\nx &lt;- np$load(\"x.npy\")\n\ntensorflow へのインターフェースに利用されている。"
+  },
+  {
+    "objectID": "rdaml/index.html#rcpp",
+    "href": "rdaml/index.html#rcpp",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Rcpp",
+    "text": "Rcpp\n\nRとC++のインターフェース\n順行・勾配計算はCoDiPack\nフレームワークのオーバーヘッドを回避して高速化\nRパッケージoptimxのnvm\n真値: $(r,, ) = \\(32, 10, 8/3),\\, (X, Y, Z) = (1, 3, 5)\\)\n第一推定値: 30 11 2 1.1 3.3 5.5\ntorch for R: 62回 32. 10.00 2.667 0.8989 3.128 5.012\nnvm: 358回 機械精度で厳密に推定\n\n\n## 表をきれいに {.scrollable}\n\n:::: {.columns}\n::: {.column}\n```r\nlibrary(tinytable)\ntrunc &lt;- c(39, 79, 119, 239, 639, 1279)\nnlon &lt;- 3 * (trunc + 1)\nnlat &lt;- nlon / 2\ndf &lt;- data.frame(trunc, nlon, nlat)\ntab &lt;- tt(df)\nstyle_tt(tab, align=\"r\")\n::: ::: {.column}\n\n\n\n\n    \n\n    \n    \n      \n        \n        \n              \n                trunc\n                nlon\n                nlat\n              \n        \n        \n        \n                \n                  39\n                  120\n                  60\n                \n                \n                  79\n                  240\n                  120\n                \n                \n                  119\n                  360\n                  180\n                \n                \n                  239\n                  720\n                  360\n                \n                \n                  639\n                  1920\n                  960\n                \n                \n                  1279\n                  3840\n                  1920\n                \n        \n      \n    \n\n\n\n::: ::::"
+  },
+  {
+    "objectID": "rdaml/index.html#quarto",
+    "href": "rdaml/index.html#quarto",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "Quarto",
+    "text": "Quarto\nRMarkdownの進化形\n\nこのスライドはMarkdownを拡張した記法で、Quartoを使って作成。\n数式、RやPythonなどコードの実行。\nPandocを使ってHTML、LaTeX、Wordなどに出力。\nbibファイルによる文献引用。"
+  },
+  {
+    "objectID": "rdaml/index.html#まとめ",
+    "href": "rdaml/index.html#まとめ",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "まとめ",
+    "text": "まとめ\n\nRは探索的データ解析に適した統計・描画環境。\n海洋・気象・地理データの描画や解析もできる。\n統計学者など専門家が作成した高品質なパッケージ。\nモデル、データ同化、機械学習のプロトタイプ作成。\nPythonのモジュールの利用やC++による高速化も可能。"
+  },
+  {
+    "objectID": "rdaml/index.html#参考文献",
+    "href": "rdaml/index.html#参考文献",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "参考文献",
+    "text": "参考文献\n\n\nGagolewski, M., 2024: Deep R Programming. Zenodo,.\n\n\nGentleman, R., and D. Temple Lang, 2007: Statistical analyses and reproducible research. Journal of Computational and Graphical Statistics, 16, 1–23, https://doi.org/10.1198/106186007X178663.\n\n\nLi, Z., N. Kovachki, K. Azizzadenesheli, B. Liu, K. Bhattacharya, A. Stuart, and A. Anandkumar, 2021: Fourier Neural Operator for parametric partial differential equations. https://doi.org/10.48550/arXiv.2010.08895.\n\n\nMarwick, B., C. Boettiger, and L. Mullen, 2018: Packaging data analytical work reproducibly using R (and friends). The American Statistician, 72, 80–88, https://doi.org/10.1080/00031305.2017.1375986.\n\n\nSchwab, M., N. Karrenbach, and J. Claerbout, 2000: Making scientific computations reproducible. Computing in Science & Engineering, 2, 61–67, https://doi.org/10.1109/5992.881708."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "データ同化夏の学校2025 初級課題",
@@ -207,7 +403,7 @@
     "href": "index.html#リンク",
     "title": "データ同化夏の学校2025 初級課題",
     "section": "リンク",
-    "text": "リンク\n\n海洋データ同化夏の学校\nソース\n2024年度課題\n応用気象学IB"
+    "text": "リンク\n\n海洋データ同化夏の学校\nソース\n2024年度課題\n応用気象学IB\nRによるデータ同化と機械学習"
   },
   {
     "objectID": "ekf/index.html#線型カルマンフィルタ",

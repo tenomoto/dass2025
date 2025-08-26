@@ -28,3 +28,4 @@ title: "データ同化夏の学校2025 初級課題"
 - [ソース](https://github.com/tenomoto/dass2025)
 - [2024年度課題](https://github.com/tenomoto/dass2025)
 - [応用気象学IB](https://www.dpac.dpri.kyoto-u.ac.jp/enomoto/lectures/daml/)
+- [Rによるデータ同化と機械学習](rdaml/)
