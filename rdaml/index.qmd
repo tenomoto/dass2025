@@ -289,7 +289,8 @@ filled.contour(1:nj, t, x.hist, nlevel=11, main=paste("Lorenz 96 F=", F),
  
 ## 自動微分と数値最適化 {.scrollable}
 
-::::{.columns}
+:::: {.columns}
+
 ::: {.column}
 [torch for R](https://torch.mlverse.org/)
 自動微分を使って<br>
@@ -332,6 +333,7 @@ y <- seq(-1, 2, 0.01)
 z <- outer(x, y, rosenbrock)
 ```
 :::
+
 ::: {.column}
 ```{r}
 #| fig-height: 12
@@ -341,6 +343,7 @@ points(xhist[,1], xhist[,2], pch=16)
 lines(xhist[,1], xhist[,2], lwd=3)
 ```
 :::
+
 ::::
 
 ## フーリエニューラル演算子
@@ -377,11 +380,10 @@ x <- np$load("x.npy")
 - torch for R: 62回 `32. 10.00 2.667 0.8989 3.128 5.012`
 - nvm: 358回 機械精度で厳密に推定
 
-```
-
 ## 表をきれいに {.scrollable}
 
 :::: {.columns}
+
 ::: {.column}
 ```r
 library(tinytable)
@@ -393,6 +395,7 @@ tab <- tt(df)
 style_tt(tab, align="r")
 ```
 :::
+
 :::  {.column}
 ```{r }
 library(tinytable)
@@ -404,6 +407,7 @@ tab <- tt(df)
 style_tt(tab, align="r")
 ```
 :::
+
 ::::
 
 ## Quarto

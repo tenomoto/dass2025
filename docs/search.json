@@ -109,7 +109,7 @@
     "href": "handson/index.html#lagrangeの未定乗数法",
     "title": "随伴モデルを作ってみよう",
     "section": "Lagrangeの未定乗数法",
-    "text": "Lagrangeの未定乗数法\n\nモデル\\(F(X, Z, ...)\\)、制御変数 \\(X\\)、状態変数 \\(Z\\)\nステップ \\(n\\) での \\(\\lambda_Z\\) は \\(X\\) に関するモデルの微分とステップ \\(n+1\\) での \\(\\lambda_Z\\)との積\n観測がある時刻はコスト函数の \\(Z\\) の微分を加える。\n\\(\\lambda_X\\)は \\(\\lambda_Z\\) と \\(X\\) に関するモデルの微分の積の総和\n\n\\[\n\\lambda_X = \\lambda_X + \\lambda_Z\\frac{\\partial F}{\\partial X}\n\\]"
+    "text": "Lagrangeの未定乗数法\n\nモデル\\(F(X, Z, ...)\\)、制御変数 \\(X\\)、状態変数 \\(Z\\)\nステップ \\(n\\) での \\(\\lambda_Z\\) は \\(Z\\) に関するモデルの微分とステップ \\(n+1\\) での \\(\\lambda_Z\\)との積\n観測がある時刻はコスト函数の \\(Z\\) 微分を加える。\n\\(\\lambda_X\\)は \\(\\lambda_Z\\) と \\(X\\) に関するモデルの微分の積の総和\n\n\\[\n\\lambda_X = \\lambda_X + \\lambda_Z\\frac{\\partial F}{\\partial X}\n\\]"
   },
   {
     "objectID": "handson/index.html#制御変数と状態変数随伴変数",
@@ -354,7 +354,14 @@
     "href": "rdaml/index.html#rcpp",
     "title": "Rによるデータ同化と機械学習",
     "section": "Rcpp",
-    "text": "Rcpp\n\nRとC++のインターフェース\n順行・勾配計算はCoDiPack\nフレームワークのオーバーヘッドを回避して高速化\nRパッケージoptimxのnvm\n真値: $(r,, ) = \\(32, 10, 8/3),\\, (X, Y, Z) = (1, 3, 5)\\)\n第一推定値: 30 11 2 1.1 3.3 5.5\ntorch for R: 62回 32. 10.00 2.667 0.8989 3.128 5.012\nnvm: 358回 機械精度で厳密に推定\n\n\n## 表をきれいに {.scrollable}\n\n:::: {.columns}\n::: {.column}\n```r\nlibrary(tinytable)\ntrunc &lt;- c(39, 79, 119, 239, 639, 1279)\nnlon &lt;- 3 * (trunc + 1)\nnlat &lt;- nlon / 2\ndf &lt;- data.frame(trunc, nlon, nlat)\ntab &lt;- tt(df)\nstyle_tt(tab, align=\"r\")\n::: ::: {.column}\n\n\n\n\n    \n\n    \n    \n      \n        \n        \n              \n                trunc\n                nlon\n                nlat\n              \n        \n        \n        \n                \n                  39\n                  120\n                  60\n                \n                \n                  79\n                  240\n                  120\n                \n                \n                  119\n                  360\n                  180\n                \n                \n                  239\n                  720\n                  360\n                \n                \n                  639\n                  1920\n                  960\n                \n                \n                  1279\n                  3840\n                  1920\n                \n        \n      \n    \n\n\n\n::: ::::"
+    "text": "Rcpp\n\nRとC++のインターフェース\n順行・勾配計算はCoDiPack\nフレームワークのオーバーヘッドを回避して高速化\nRパッケージoptimxのnvm\n真値: $(r,, ) = \\(32, 10, 8/3),\\, (X, Y, Z) = (1, 3, 5)\\)\n第一推定値: 30 11 2 1.1 3.3 5.5\ntorch for R: 62回 32. 10.00 2.667 0.8989 3.128 5.012\nnvm: 358回 機械精度で厳密に推定"
+  },
+  {
+    "objectID": "rdaml/index.html#表をきれいに",
+    "href": "rdaml/index.html#表をきれいに",
+    "title": "Rによるデータ同化と機械学習",
+    "section": "表をきれいに",
+    "text": "表をきれいに\n\n\nlibrary(tinytable)\ntrunc &lt;- c(39, 79, 119, 239, 639, 1279)\nnlon &lt;- 3 * (trunc + 1)\nnlat &lt;- nlon / 2\ndf &lt;- data.frame(trunc, nlon, nlat)\ntab &lt;- tt(df)\nstyle_tt(tab, align=\"r\")\n\n\n\n\n\n    \n\n    \n    \n      \n        \n        \n              \n                trunc\n                nlon\n                nlat\n              \n        \n        \n        \n                \n                  39\n                  120\n                  60\n                \n                \n                  79\n                  240\n                  120\n                \n                \n                  119\n                  360\n                  180\n                \n                \n                  239\n                  720\n                  360\n                \n                \n                  639\n                  1920\n                  960\n                \n                \n                  1279\n                  3840\n                  1920"
   },
   {
     "objectID": "rdaml/index.html#quarto",
