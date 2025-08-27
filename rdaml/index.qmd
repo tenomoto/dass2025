@@ -1,9 +1,10 @@
 ---
 title: "Rによるデータ同化と機械学習"
 author: "榎本剛"
+date: 2025-08-27
 format:
   revealjs:
-    footer: RDAML
+    footer: データ同化夏の学校2025
     slide-number: true
     slide-navigation: true
     controls: true
