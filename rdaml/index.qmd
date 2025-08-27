@@ -280,6 +280,8 @@ filled.contour(1:nj, t, x.hist, nlevel=11, main=paste("Lorenz 96 F=", F),
                ylim=rev(range(t)), xlab="j", ylab="time")
 ```
 
+# Rで機械学習?
+
 ## Rの機械学習ライブラリ
 
 - [CRAN TaskView](https://cran.r-project.org/web/views/MachineLearning.html)
